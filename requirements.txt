@@ -1,0 +1,3 @@
+conda install pytorch torchvision pytorch-cuda=12.1 -c pytorch -c nvidia  # torch 2.1.1 as of Dec 2023
+pip install pandas
+pip install wandb  # Follow: https://wandb.ai/home

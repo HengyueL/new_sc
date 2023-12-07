@@ -1,0 +1,43 @@
+{
+    "seed": 42,
+
+    "log_folder": {
+        "save_root": "SC-Train-1"
+    },
+
+    "wandb":{
+        "project": "SC_training"
+    },
+
+    "dataset":{
+        "name": "cifar10",
+        "dataset_path": "C:\\Users\\Liang\\dataset\\Cifar10\\Clean",
+        "batch_size": 128,
+        "num_worker": 8
+    },
+
+    "model": {
+        "name": "resnet50",
+        "normalized_fc": true
+    },
+
+    "train":{
+
+        "total_epochs": 300,
+
+        "loss": {
+            "name": "CE",
+            "reduction": "mean"
+        },
+
+        "optimizer": {
+            "name": "AdamW",
+            "lr": 1e-3
+        },
+
+        "scheduler": {
+            "name": "CosineAnealing"
+        }
+    }
+
+}
