@@ -107,9 +107,10 @@ def main(cfg):
     print_and_log(msg, log_file)
     try:
         # FLAG to terminate the training process in case some scheduler turns the lr too small
-        target_lr = cfg["optimizer"]["stop_lr"]
+        target_lr = cfg["train"]["optimizer"]["stop_lr"]
         stop_training = check_lr_criterion(optimizer_lr, target_lr)
     except:
+        target_lr = 1e-12
         stop_training = False
 
     # For every print_loss_interval (iters), print one avg training loss to monitor the convergence
