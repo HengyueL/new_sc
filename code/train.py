@@ -15,6 +15,7 @@ from utils.dataset import get_loader_train
 
 
 def main(cfg):
+    print("===== ===== ===== ===== ")
     set_random_seeds(cfg["seed"])
 
     # === Init WandB Logger ===

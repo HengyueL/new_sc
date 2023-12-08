@@ -8,6 +8,7 @@ from utils.dataset import get_loader_imagenet_val, get_loader_imagenet_c, get_lo
 
 
 def main(args):
+    print("===== ===== ===== ===== ")
     dataset_path_dict = load_json(args.dataset_path_dict)
     batch_size = args.batch_size
     device = torch.device("cuda")
@@ -147,11 +148,12 @@ def main(args):
         np.concatenate(label_log, axis=0).shape
     )
 
-    if "-c" not in args.dataset and "100" not in args.dataset and "-o" not in args.dataset:
+    if "100" not in args.dataset and "-o" not in args.dataset:
         logits_np = np.concatenate(logits_log, axis=0)
         labels_np = np.concatenate(label_log, axis=0)
         acc = np.mean(np.argmax(logits_np, axis=1) == labels_np) * 100
-        print("%s Clean Acc: %.04f" % (args.dataset, acc))
+        print("%s Acc: %.04f" % (args.dataset, acc))
+        print("   ")
 
 
 if __name__ == "__main__":
