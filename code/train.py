@@ -53,6 +53,7 @@ def main(cfg):
 
     # === Creat Model, Dataset for training and validation ===
     model, msg = get_model(cfg)
+    model = model.to(device)
     print_and_log(msg, log_file, mode=log_mode)
     
     train_loader, val_loader, msg = get_loader(cfg["dataset"], only_val=False)
@@ -136,8 +137,8 @@ def main(cfg):
             scaler.update()
 
             rolling_train_loss_log.append(loss.item())
-            if total_iter % 50 == 0:
-                print("   Iter [%d] - Train Loss [%.08f]" % (total_iter, loss.item()))
+            # if total_iter % 50 == 0:
+            print("   Iter [%d] - Train Loss [%.08f]" % (total_iter, loss.item()))
             # === print training loss per interval ===
             if total_iter % print_loss_interval == 0 and total_iter > 0:
                 avg_loss = np.mean(rolling_train_loss_log)

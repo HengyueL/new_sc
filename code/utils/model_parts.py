@@ -117,9 +117,12 @@ class LinearStandardized(nn.Linear):
         self.use_bias = bias  
        
     def forward(self, input):
+        device, dtype = input.device, input.dtype
         if self.use_bias:
             new_weight = torch.cat([self.weight, self.bias.unsqueeze(1)], dim=1)
-            new_input = torch.cat([input, torch.ones([input.shape[0], 1])], dim=1)
+            new_input = torch.cat(
+                [input, torch.ones([input.shape[0], 1]).to(device, dtype=dtype)], dim=1
+            )
         else:
             new_input = input
             new_weight = self.weight
