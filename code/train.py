@@ -131,8 +131,9 @@ def main(cfg):
             with torch.autocast(device_type="cuda"):
                 output = model(inputs)
                 loss = train_loss_func(output, labels)
-            loss.backward()
-            optimizer.step()
+            scaler.scale(loss).backward()
+            scaler.step(optimizer)
+            scaler.update()
 
             rolling_train_loss_log.append(loss.item())
             # === print training loss per interval ===
