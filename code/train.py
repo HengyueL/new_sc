@@ -11,7 +11,7 @@ from utils.general import load_json, set_random_seeds, makedir, create_log_info_
     save_dict_to_csv
 from utils.train_builder import get_loss, get_samples, save_model_ckp, get_scheduler, \
     get_optimizer, get_model
-from utils.dataset import get_loader
+from utils.dataset import get_loader_train
 
 
 def main(cfg):
@@ -57,7 +57,7 @@ def main(cfg):
     model = model.to(device)
     print_and_log(msg, log_file, mode=log_mode)
     
-    train_loader, val_loader, msg = get_loader(cfg["dataset"], only_val=False)
+    train_loader, val_loader, msg = get_loader_train(cfg["dataset"], only_val=False)
     print_and_log(msg, log_file)
 
     # === Create Scheduler, Optmizer 

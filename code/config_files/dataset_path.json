@@ -1,0 +1,13 @@
+{
+    "imagenet": "/scratch.global/liang656/ImageNet2012",
+    "imagenet-c": "/scratch.global/liang656/ImageNet-C/",
+    "imagenet-o": "/scratch.global/liang656/ImageNet-O",
+    "openimage-o": {
+        "data_path": "/scratch.global/liang656/OpenImage",
+        "annot_file_path": "/home/jusun/liang656/sc_train/openimage_o.txt"
+    },
+    "cifar10": "/home/jusun/liang656/datasets/Cifar10/Clean",
+    "cifar100": "/home/jusun/liang656/datasets/Cifar100/Clean",
+    "cifar10-c": "/home/jusun/liang656/datasets/Cifar10/CIFAR10-C"
+
+}

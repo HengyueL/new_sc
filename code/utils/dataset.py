@@ -2,7 +2,7 @@
 import os
 from collections import namedtuple
 import torchvision
-from torchvision.datasets import CIFAR10, ImageNet
+from torchvision.datasets import CIFAR10, ImageNet, CIFAR100
 from torch.utils.data import DataLoader
 from torch.utils.data import Dataset
 from torchvision.datasets import ImageFolder
@@ -88,7 +88,7 @@ def get_dataset(dataset_cfg):
     return train_set, val_set
 
 
-def get_loader(dataset_cfg, only_val=True):
+def get_loader_train(dataset_cfg, only_val=True):
     train_set, val_set = get_dataset(dataset_cfg)
     batch_size = dataset_cfg["batch_size"]
     num_workers = dataset_cfg["num_workers"]
@@ -138,13 +138,44 @@ class CifarCDataset(Dataset):
         return data, label
 
 
+# CIFAR10 Clean validation loader
+def get_loader_cifar10_val(
+    data_path, batch_size=512
+):
+    val_transform = get_trainsform(name="cifar10", is_train=False)
+    val_dataset = CIFAR10(
+        data_path, train=False, transform=val_transform, download=False
+    )
+    val_loader = DataLoader(
+        val_dataset, batch_size=batch_size, shuffle=False
+    )
+    return val_loader
+
+
 # CIFAR10-C loader
 def get_loader_cifar10_c(
     data_path, corr_type, corr_level, batch_size=512
 ):
     val_transform = get_trainsform(name="cifar10-c", is_train=False)
     val_dataset = CifarCDataset(
-        data_path, 
+        data_path, corr_type, corr_level, transform=val_transform
+    )
+    val_loader = DataLoader(
+        val_dataset, batch_size=batch_size, shuffle=False
+    )
+    return val_loader
+
+
+# CIFAR100 val loader
+def get_loader_cifar100_val(
+    data_path, batch_size=512
+):
+    val_transform = get_trainsform(name="cifar100", is_train=False)
+    val_dataset = CIFAR100(
+        data_path, train=False, transform=val_transform, download=False
+    )
+    val_loader = DataLoader(
+        val_dataset, batch_size=batch_size, shuffle=False
     )
     return val_loader
 
