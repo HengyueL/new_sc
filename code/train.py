@@ -121,6 +121,10 @@ def main(cfg):
         t_start = time.time()  # Epoch Training start time
         msg = "===== Training epoch [%d] =====" % epoch
         print_and_log(msg, log_file)
+        optimizer_lr = get_optimizer_lr(optimizer)
+        msg = "  Lr --- %.06f " % optimizer_lr
+        print_and_log(msg, log_file)
+        stop_training = check_lr_criterion(optimizer_lr, target_lr)   # If lr has been too small, the final epoch to train
         
         model.train()
         for _, data in enumerate(train_loader):
@@ -137,8 +141,8 @@ def main(cfg):
             scaler.update()
 
             rolling_train_loss_log.append(loss.item())
-            # if total_iter % 50 == 0:
-            print("   Iter [%d] - Train Loss [%.08f]" % (total_iter, loss.item()))
+            if total_iter % 50 == 0:
+                print("   Iter [%d] - Train Loss [%.08f]" % (total_iter, loss.item()))
             # === print training loss per interval ===
             if total_iter % print_loss_interval == 0 and total_iter > 0:
                 avg_loss = np.mean(rolling_train_loss_log)
@@ -191,7 +195,8 @@ def main(cfg):
             wandb.log({
                 "train_loss": avg_train_loss_epoch, 
                 "val_loss": val_loss_epoch,
-                "val_acc": val_acc
+                "val_acc": val_acc,
+                "lr": optimizer_lr,
             })
         if val_acc > best_val_acc:
             best_val_acc = val_acc
