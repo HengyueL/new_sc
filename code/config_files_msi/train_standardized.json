@@ -7,7 +7,7 @@
     },
 
     "wandb":{
-        "init": true,
+        "init": false,
         "project": "SC_training"
     },
 
