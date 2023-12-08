@@ -1,5 +1,6 @@
 {
     "seed": 42,
+    "continue": false,
 
     "log_folder": {
         "save_root": "SC-Train-1"
@@ -25,7 +26,7 @@
 
     "train":{
 
-        "total_epochs": 300,
+        "total_epochs": 2,
         "print_interval": 500,
 
         "loss": {

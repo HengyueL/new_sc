@@ -52,7 +52,7 @@ def main(cfg):
     device, n_gpu = set_cuda_device()   # if n_gpu > 1, use data parallel
 
     # === Creat Model, Dataset for training and validation ===
-    model, msg = get_model(config=cfg)
+    model, msg = get_model(cfg)
     print_and_log(msg, log_file, mode=log_mode)
     
     train_loader, val_loader, msg = get_loader(cfg["dataset"], only_val=False)
@@ -118,7 +118,7 @@ def main(cfg):
     while epoch < cfg["train"]["total_epochs"] and not stop_training:
         epoch += 1
         t_start = time.time()  # Epoch Training start time
-        msg = "===== Training epoch [%d] ====="
+        msg = "===== Training epoch [%d] =====" % epoch
         print_and_log(msg, log_file)
         
         model.train()

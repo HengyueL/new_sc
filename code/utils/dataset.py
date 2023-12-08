@@ -35,7 +35,7 @@ def get_trainsform(name, input_size=None, normalize=True, is_train=False):
         transform.extend([
             torchvision.transforms.Normalize(
                 mean=DATASET_CONFIG[name].mean, 
-                std=DATASET_CONFIG[name].st
+                std=DATASET_CONFIG[name].std
             ),
         ])
     return torchvision.transforms.Compose(transform)
