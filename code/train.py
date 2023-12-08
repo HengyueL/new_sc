@@ -208,6 +208,10 @@ def main(cfg):
             save_model_ckp(
                 model, epoch, total_iter, optimizer, scheduler, ckpt_dir, name=best_model_ckpt_name
             )
+            msg = "Best Model achieved so far at Epoch [%d] with Val Acc [%.08f]" % (epoch, val_acc)
+            print_and_log(msg, log_file)
+        
+        # === Scheduler Update ===
         if cfg["train"]["scheduler"]["name"] != "ReduceLROnPlateau":
             scheduler.step()
         else:
