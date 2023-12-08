@@ -1,3 +1,4 @@
 utils/__pycache__/
 slurm_files/
 config_files_msi/
+wandb/
