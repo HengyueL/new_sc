@@ -1,2 +1,4 @@
 log_folder/
 slurm_files/
+code/wandb/
+code/config_files_msi/

@@ -3,11 +3,11 @@
     "continue": false,
 
     "log_folder": {
-        "save_root": "SC-Train-1"
+        "save_root": "CIFAR-Standardized-FC"
     },
 
     "wandb":{
-        "init": false,
+        "init": true,
         "project": "SC_training"
     },
 
