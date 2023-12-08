@@ -187,6 +187,7 @@ def main(cfg):
         msg = "  Epoch [%d] Validation loss - [%.08f] | Validation acc - [%.04f %%]" % (
             epoch, val_loss_epoch, val_acc
         )
+        print_and_log(msg, log_file)
 
         # === Log Training Stats ===
         summary["val_loss"].append(val_loss_epoch)
