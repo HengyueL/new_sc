@@ -45,7 +45,7 @@ def main(args):
             data_path, batch_size
         )
     elif args.dataset == 'cifar10-c':
-        print("Cifar-10-c")
+        print("CIFAR10-c - %s - %d" % (args.corr_type, args.corr_level))
         data_path = dataset_path_dict[args.dataset]
         test_loader = get_loader_cifar10_c(
             data_path, args.corr_type, args.corr_level, batch_size=batch_size
