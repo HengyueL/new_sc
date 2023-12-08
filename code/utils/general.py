@@ -1,6 +1,7 @@
 import os, json, random
 import torch
 import numpy as np
+import pandas as pd
 
 
 def load_json(json_path):
@@ -44,6 +45,22 @@ def save_exp_info(save_dir, config):
     # Save Exp Settings as Json File
     exp_config_file = os.path.join(save_dir, "Exp_Config.json")
     save_dict_to_json(config, exp_config_file)
+
+
+def save_dict_to_csv(
+    summary_dict,
+    save_name,
+    transpose=False
+):
+    """
+        Save a dict into json file.
+    """
+    # csv format
+    if not transpose:
+        pd_data = pd.DataFrame.from_dict(summary_dict)
+    else:
+        pd_data = pd.DataFrame.from_dict(summary_dict).T
+    pd_data.to_csv(save_name, index=False)
 
 
 def count_cuda_devices():

@@ -6,6 +6,7 @@
     },
 
     "wandb":{
+        "init": false,
         "project": "SC_training"
     },
 
@@ -13,17 +14,19 @@
         "name": "cifar10",
         "dataset_path": "C:\\Users\\Liang\\dataset\\Cifar10\\Clean",
         "batch_size": 128,
-        "num_worker": 8
+        "num_workers": 8,
+        "num_classes": 10
     },
 
     "model": {
-        "name": "resnet50",
-        "normalized_fc": true
+        "name": "resnet",
+        "standardized_fc": true
     },
 
     "train":{
 
         "total_epochs": 300,
+        "print_interval": 500,
 
         "loss": {
             "name": "CE",
@@ -32,12 +35,21 @@
 
         "optimizer": {
             "name": "AdamW",
-            "lr": 1e-3
+            "lr": 1e-3,
+            "weight_decay": 2e-5
         },
 
         "scheduler": {
-            "name": "CosineAnealing"
+            "name": "CosineAnealing",
+            "mode": null,
+            "patience": null
+        }
+    },
+
+    "val":{
+        "loss": {
+            "name": "CE",
+            "reduction": "mean"
         }
     }
-
 }
