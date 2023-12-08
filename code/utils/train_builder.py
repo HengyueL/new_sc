@@ -125,7 +125,13 @@ def get_model(cfg):
             standardized_linear_weights=standardized_fc
         )
     elif dataset_name in ["imagenet", "imagenet-c"]:
-        raise RuntimeError("ImageNet Models unimplemented.")
+        if model_name == "resnet":
+            model = ResNetCustomized(
+                num_classes=num_classes, dim_features=512, init_weights=True, 
+                standardized_linear_weights=standardized_fc
+            )
+        else:
+            raise RuntimeError("ImageNet Models unimplemented.")
     else:
         raise RuntimeError("Unsupported models.")
     msg = "  Use Model %s " % (model.__repr__)
