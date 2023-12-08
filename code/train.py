@@ -128,7 +128,7 @@ def main(cfg):
             optimizer.zero_grad()
 
             # Mixed precision autocast
-            with torch.autocast(device_type="cuda"):
+            with torch.autocast(device_type="cuda", dtype=torch.float16):
                 output = model(inputs)
                 loss = train_loss_func(output, labels)
             scaler.scale(loss).backward()
