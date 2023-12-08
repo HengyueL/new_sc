@@ -60,7 +60,7 @@ def main(args):
     
     # === Generate Model config (in the training format so that we can reuse the function wrapper)
     training_config = load_json(args.model_config)
-    model = get_model(training_config)
+    model, _ = get_model(training_config)
     ckpt_dir = os.path.join(
         training_config["ckpt_dir"], "best.pth"
     )
