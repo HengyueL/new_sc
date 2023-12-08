@@ -1,9 +1,9 @@
 {
-    "seed": 42,
+    "seed": 17,
     "continue": false,
 
     "log_folder": {
-        "save_root": "CIFAR-Standardized-FC"
+        "save_root": "CIFAR-Standardized-FC-2"
     },
 
     "wandb":{
