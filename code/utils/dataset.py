@@ -81,7 +81,6 @@ def get_dataset(dataset_cfg):
         val_set = ImageNet(
             dataset_dir, split="val", transform=val_transform
         )
-        raise RuntimeError("ImageNet dataset unimplemetend.")
     else:
         raise RuntimeError("Unrecognized dataset.")
 
