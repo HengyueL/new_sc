@@ -203,9 +203,9 @@ if __name__ == "__main__":
                     args.corr_type = corr_type
                     args.corr_level = corr_level
                     main(args)
-        args.dataset = "cifar100"
-        main(args)
         args.dataset = "cifar10"
+        main(args)
+        args.dataset = "cifar100"
         main(args)
 
     print("Completed.")
