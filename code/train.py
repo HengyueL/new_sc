@@ -203,7 +203,7 @@ def main(cfg):
             })
         if val_acc > best_val_acc:
             best_val_acc = val_acc
-            best_model_ckpt_name = "best.pth"
+            best_model_ckpt_name = "best"
             save_model_ckp(
                 model, epoch, total_iter, optimizer, scheduler, ckpt_dir, name=best_model_ckpt_name
             )
