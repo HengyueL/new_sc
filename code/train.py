@@ -96,7 +96,7 @@ def main(cfg):
 
     # set this flag so that we can point to the saved config file (.json) in the checkpoint folder to resumt training
     # Instead of using a new one in <config_files> folder
-    cfg["resume"] = True  
+    cfg["continue"] = True  
     save_exp_info(exp_log_root, cfg)
 
     if n_gpu > 1:  # Data Parallel if use multiple GPUs
