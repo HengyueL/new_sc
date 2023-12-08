@@ -63,7 +63,7 @@ def main(args):
     training_config = load_json(args.model_config)
     model, _ = get_model(training_config)
     ckpt_dir = os.path.join(
-        training_config["ckpt_dir"], "best.pth"
+        training_config["ckpt_dir"], "latest.pth"
     )
     model_state_dict = torch.load(ckpt_dir)["model_state_dict"]
     model.load_state_dict(model_state_dict)
