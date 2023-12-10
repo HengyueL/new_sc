@@ -126,7 +126,7 @@ def get_model(cfg):
         )
     elif dataset_name in ["imagenet", "imagenet-c"]:
         if model_name == "resnet":
-            model = ResNet34Customized(
+            model = ResNet50Customized(
                 num_classes=num_classes, dim_features=512, init_weights=True, 
                 standardized_linear_weights=standardized_fc
             )
