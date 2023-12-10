@@ -1,7 +1,6 @@
 import torch
-# from utils.model_parts import resnet34, LinearStandardized
+from utils.model_parts import resnet34, LinearStandardized
 from torchvision.models import resnet50 as rn50
-from model_parts import resnet34, LinearStandardized
 
 
 class ResNet34Customized(torch.nn.Module):
