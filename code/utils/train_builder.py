@@ -132,7 +132,7 @@ def get_model(cfg):
             )
         elif model_name == "resnet50":
             model = ResNet50Customized(
-                num_classes=num_classes, dim_features=512, init_weights=True, 
+                num_classes=num_classes, init_weights=True, 
                 standardized_linear_weights=standardized_fc
             )
         else:
