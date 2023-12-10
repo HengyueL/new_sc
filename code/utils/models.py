@@ -1,6 +1,7 @@
 import torch
-from utils.model_parts import resnet34, LinearStandardized
+# from utils.model_parts import resnet34, LinearStandardized
 from torchvision.models import resnet50 as rn50
+from model_parts import resnet34, LinearStandardized
 
 
 class ResNet34Customized(torch.nn.Module):
@@ -62,7 +63,7 @@ class ResNet50Customized(torch.nn.Module):
         Customized resnet with option to set the fc layer to have standardized weights 
     """
     def __init__(
-            self, num_classes=10, dim_features=512, init_weights=True, 
+            self, num_classes=10, dim_features=2048, init_weights=True, 
             standardized_linear_weights=False
         ):
         """
@@ -76,27 +77,22 @@ class ResNet50Customized(torch.nn.Module):
 
         weights = None if init_weights else "pretrained"
         self.features = rn50(weights=weights)
-        self.dim_features = dim_features
+        self.dim_features = 2048
         self.num_classes = num_classes
         
-        # represented as f() in the original paper
+        # This changes the torch default resnet structure minimally.
         if not standardized_linear_weights:
-            self.classifier = torch.nn.Sequential(
-                torch.nn.Linear(self.dim_features, self.num_classes)
-            )
+            pass
         else:
-            self.classifier = torch.nn.Sequential(
-                LinearStandardized(self.dim_features, self.num_classes)
-            )
+            self.classifier = LinearStandardized(self.dim_features, self.num_classes)
+            self.features.fc = self.classifier
+
         # initialize weights of heads
         if init_weights:
             self._initialize_weights(self.features)
-            self._initialize_weights(self.classifier)
-
+        
     def forward(self, x):
-        x = self.features(x)
-        x = x.view(x.size(0), -1)
-        prediction_out = self.classifier(x)
+        prediction_out = self.features(x)
         return prediction_out
 
     def _initialize_weights(self, module):
@@ -115,7 +111,7 @@ class ResNet50Customized(torch.nn.Module):
 
 
 if __name__ == "__main__":
-    test_model = ResNet50Customized(num_classes=1000, dim_features=1024, standardized_linear_weights=True)
+    test_model = ResNet50Customized(num_classes=1000, dim_features=1024, standardized_linear_weights=False)
     test_input = torch.randn([1,3,224,224])
     test_output = test_model(test_input)
-    print()
+    print("Test Completed")

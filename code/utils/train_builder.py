@@ -125,7 +125,7 @@ def get_model(cfg):
             standardized_linear_weights=standardized_fc
         )
     elif dataset_name in ["imagenet", "imagenet-c"]:
-        if model_name in ["resnet", "resnet34"]:
+        if model_name == "resnet":
             model = ResNet34Customized(
                 num_classes=num_classes, dim_features=512, init_weights=True, 
                 standardized_linear_weights=standardized_fc
