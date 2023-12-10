@@ -118,15 +118,20 @@ def get_model(cfg):
     model_name = cfg["model"]["name"]
     standardized_fc = cfg["model"]["standardized_fc"]
 
-    if dataset_name in ["cifar10", "cifar10-c"] and model_name == "resnet":
-        
+    if dataset_name in ["cifar10", "cifar10-c"] and model_name in ["resnet", "resnet34"]:
+        # === By default use resnet 34 ===
         model = ResNet34Customized(
             num_classes=num_classes, dim_features=512, init_weights=True, 
             standardized_linear_weights=standardized_fc
         )
     elif dataset_name in ["imagenet", "imagenet-c"]:
-        if model_name == "resnet":
+        if model_name in ["resnet", "resnet34"]:
             model = ResNet34Customized(
+                num_classes=num_classes, dim_features=512, init_weights=True, 
+                standardized_linear_weights=standardized_fc
+            )
+        elif model_name in ["resnet50"]:
+            model = ResNet50Customized(
                 num_classes=num_classes, dim_features=512, init_weights=True, 
                 standardized_linear_weights=standardized_fc
             )
