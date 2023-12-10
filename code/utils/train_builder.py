@@ -1,6 +1,6 @@
 import torch
 import os
-from utils.models import ResNetCustomized
+from utils.models import ResNet34Customized, ResNet50Customized
 
 def get_loss(loss_config):
     msg = "  Use Loss "
@@ -120,13 +120,13 @@ def get_model(cfg):
 
     if dataset_name in ["cifar10", "cifar10-c"] and model_name == "resnet":
         
-        model = ResNetCustomized(
+        model = ResNet34Customized(
             num_classes=num_classes, dim_features=512, init_weights=True, 
             standardized_linear_weights=standardized_fc
         )
     elif dataset_name in ["imagenet", "imagenet-c"]:
         if model_name == "resnet":
-            model = ResNetCustomized(
+            model = ResNet34Customized(
                 num_classes=num_classes, dim_features=512, init_weights=True, 
                 standardized_linear_weights=standardized_fc
             )
