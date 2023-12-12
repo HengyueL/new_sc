@@ -1,6 +1,8 @@
 import torch
 import os
-from utils.models import ResNet34Customized, ResNet50Customized
+import timm
+from utils.models import ResNet34Customized, ResNet50Customized, TIMM_MODEL_CARDS, build_timm_model
+
 
 def get_loss(loss_config):
     msg = "  Use Loss "
@@ -135,6 +137,8 @@ def get_model(cfg):
                 num_classes=num_classes, init_weights=True, 
                 standardized_linear_weights=standardized_fc
             )
+        elif model_name in TIMM_MODEL_CARDS.keys():  #  Timm Pretrained model finetuning
+            model = build_timm_model(model_name, standardized_linear_weights=standardized_fc)
         else:
             raise RuntimeError("ImageNet Models unimplemented.")
     else:

@@ -1,7 +1,15 @@
 import torch
-from utils.model_parts import resnet34, LinearStandardized
+# from utils.model_parts import resnet34, LinearStandardized
+from model_parts import resnet34, LinearStandardized
 from torchvision.models import resnet50 as rn50
+import timm
+TIMM_MODEL_CARDS = {
+    "Timm-ResNext": "seresnextaa101d_32x8d.sw_in12k_ft_in1k",
+    "Timm-WideResnet": "wide_resnet101_2.tv2_in1k",
+    "Timm-VOLO": "volo_d4_224.sail_in1k",
+    "Timm-ConvNext": "convnextv2_base.fcmae_ft_in22k_in1k",
 
+}
 
 class ResNet34Customized(torch.nn.Module):
     """
@@ -108,9 +116,36 @@ class ResNet50Customized(torch.nn.Module):
                 torch.nn.init.constant_(m.bias, 0)
 
 
+def build_timm_model(model_name, standardized_linear_weights=False):
+    model_card_name = TIMM_MODEL_CARDS[model_name]
+    model = timm.create_model(
+        model_card_name, pretrained=True
+    )
+    if standardized_linear_weights:
+        if model_name in ["Timm-ConvNext", "Timm-CoAtNet", "Timm-mViT"]:
+            n_in, n_out = model.head.fc.in_features, model.head.fc.out_features
+            model.head.fc = LinearStandardized(n_in, n_out)
+        elif model_name in ["Timm-VOLO", "Timm-MLP", "Timm-DeiT", "Timm-EVA"]:
+            n_in, n_out = model.head.in_features, model.head.out_features
+            model.head = LinearStandardized(n_in, n_out)
+        elif model_name in ["Timm-WideResNet", "Timm-ResNext"]:
+            n_in, n_out = model.fc.in_features, model.fc.out_features
+            model.fc = LinearStandardized(n_in, n_out)
+        elif model_name in ["Timm-MobileNet", "Timm-EfficientNet"]:
+            n_in, n_out = model.classifier.in_features, model.classifier.out_features
+            model.classifier = LinearStandardized(n_in, n_out)
+        else:
+            raise RuntimeError("Unimplemented Timm model creation.")
+    return model
+
 
 if __name__ == "__main__":
-    test_model = ResNet50Customized(num_classes=1000, dim_features=1024, standardized_linear_weights=False)
+    # test_model = ResNet50Customized(num_classes=1000, dim_features=1024, standardized_linear_weights=False)
+    # test_input = torch.randn([1,3,224,224])
+    # test_output = test_model(test_input)
+    # print("Test Completed")
+
+    test_model = build_timm_model("Timm-ResNext", True)
     test_input = torch.randn([1,3,224,224])
     test_output = test_model(test_input)
     print("Test Completed")
