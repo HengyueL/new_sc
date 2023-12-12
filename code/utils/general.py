@@ -2,6 +2,7 @@ import os, json, random
 import torch
 import numpy as np
 import pandas as pd
+import platform
 
 
 def load_json(json_path):
@@ -123,3 +124,12 @@ def check_lr_criterion(lr, target_lr):
         True if meet lr criterion
     """
     return lr <= target_lr
+
+# ==== functions related to config setup ====
+def clear_terminal_output():
+    system_os = platform.system()
+    if "Windows" in system_os:
+        cmd = "cls"
+    elif "Linux" in system_os:
+        cmd = "clear"
+    os.system(cmd)
