@@ -15,7 +15,7 @@ sns.set()
 
 def main():
     rc_folder_1 = os.path.join(
-        "test-vis", "RC-Curve-Data", "CIFAR-Normal-FC-3"
+        "test-vis", "RC-Curve-Data", "CIFAR-Normal-2"
     )
     with open(os.path.join(rc_folder_1, "coverage.pkl"), 'rb') as fp:
         c1 = pickle.load(fp)
@@ -23,7 +23,7 @@ def main():
         r1 = pickle.load(fp)
 
     rc_folder_2 = os.path.join(
-        "test-vis", "RC-Curve-Data", "CIFAR-Standardized-FC-2"
+        "test-vis", "RC-Curve-Data", "CIFAR-STD-2"
     )
     with open(os.path.join(rc_folder_2, "coverage.pkl"), 'rb') as fp:
         c2 = pickle.load(fp)

@@ -377,7 +377,7 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument(
         "--model_name", dest="model_name", type=str,
-        default="CIFAR-Normal-FC-3",
+        default="CIFAR-STD-2",
         help="Model name to test."
     )
     args = parser.parse_args()
