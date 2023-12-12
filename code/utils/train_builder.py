@@ -69,6 +69,15 @@ def get_scheduler(config, optimizer):
         msg += "[ReduceLROnPlateau]"
     else:
         raise RuntimeError("The author did not implement other scheduler yet.")
+    
+    # === Add 3 warm up epochs ===
+    warm_up_scheduler = torch.optim.lr_scheduler.LinearLR(
+        optimizer, start_factor=0.2, total_iters=3
+    )
+    scheduler = torch.optim.lr_scheduler.SequentialLR(
+        optimizer, schedulers=[warm_up_scheduler, scheduler], milestones=[3]
+    )
+    msg += " with Linear Warm Ups (3 epochs)."
     return scheduler, msg
 
 
