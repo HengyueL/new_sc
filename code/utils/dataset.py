@@ -96,10 +96,10 @@ def get_loader_train(dataset_cfg, only_val=True):
         train_loader = None
     else:
         train_loader = DataLoader(
-            dataset=train_set, batch_size=batch_size, shuffle=True, num_workers=num_workers, pin_memory=True
+            dataset=train_set, batch_size=batch_size, shuffle=True, num_workers=num_workers
         )
     val_loader = DataLoader(
-        dataset=val_set, batch_size=batch_size, shuffle=False, num_workers=num_workers, pin_memory=True
+        dataset=val_set, batch_size=batch_size, shuffle=False, num_workers=num_workers
     )
     return train_loader, val_loader, msg
 
@@ -216,7 +216,7 @@ def get_loader_imagenet_o(data_path, batch_size=512):
         root=data_path, transform=val_transforms
     )
     val_loader = DataLoader(
-        dataset, batch_size=batch_size, shuffle=False, pin_memory=True
+        dataset, batch_size=batch_size, shuffle=False
     )
     return val_loader
 
@@ -279,6 +279,6 @@ def get_loader_openimage_o(data_path, text_path, batch_size=512):
         dataset_path, annot_txt_path, transform=val_transforms
     )
     val_loader = DataLoader(
-        dataset, batch_size=batch_size, shuffle=False, pin_memory=True
+        dataset, batch_size=batch_size, shuffle=False
     )
     return val_loader
