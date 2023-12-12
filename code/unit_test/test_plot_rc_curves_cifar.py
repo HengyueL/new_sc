@@ -263,22 +263,22 @@ def read_data(dir, load_classifier_weight=False):
 
 
 def main(args):
-    # INC_CORR_TYPE_LIST = [
-    #     "brightness", "contrast", "defocus_blur", "elastic_transform", "fog",
-    #     "frost", "gaussian_blur", "gaussian_noise", "jpeg_compression", "motion_blur",
-    #     "pixelate", "saturate", "shot_noise", "snow", "spatter",
-    #     "speckle_noise", "zoom_blur"
-    # ]
-    # INO_LIST = [
-    #     "cifar100"
-    # ]
-
     INC_CORR_TYPE_LIST = [
-        "gaussian_blur"
+        "brightness", "contrast", "defocus_blur", "elastic_transform", "fog",
+        "frost", "gaussian_blur", "gaussian_noise", "jpeg_compression", "motion_blur",
+        "pixelate", "saturate", "shot_noise", "snow", "spatter",
+        "speckle_noise", "zoom_blur"
     ]
     INO_LIST = [
         "cifar100"
     ]
+
+    # INC_CORR_TYPE_LIST = [
+    #     "gaussian_blur"
+    # ]
+    # INO_LIST = [
+    #     "cifar100"
+    # ]
     model_name = args.model_name
     read_data_root = get_read_data_dir(model_name)
     save_rc_root, save_conf_root, save_rc_data_root = create_save_data_dir(model_name)
@@ -377,7 +377,7 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument(
         "--model_name", dest="model_name", type=str,
-        default="CIFAR-Standardized-FC-2",
+        default="CIFAR-Normal-FC-3",
         help="Model name to test."
     )
     args = parser.parse_args()
