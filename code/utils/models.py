@@ -1,6 +1,5 @@
 import torch
-# from utils.model_parts import resnet34, LinearStandardized
-from model_parts import resnet34, LinearStandardized
+from utils.model_parts import resnet34, LinearStandardized
 from torchvision.models import resnet50 as rn50
 import timm
 TIMM_MODEL_CARDS = {
