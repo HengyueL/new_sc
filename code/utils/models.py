@@ -60,7 +60,7 @@ class ResNet34Customized(torch.nn.Module):
             elif isinstance(m, torch.nn.BatchNorm1d):
                 torch.nn.init.constant_(m.weight, 1)
                 torch.nn.init.constant_(m.bias, 0)
-            elif isinstance(m, torch.nn.Linear):
+            elif isinstance(m, torch.nn.Linear) or isinstance(m, LinearStandardized):
                 torch.nn.init.normal_(m.weight, 0, 0.01)
                 torch.nn.init.constant_(m.bias, 0)
 
@@ -111,7 +111,7 @@ class ResNet50Customized(torch.nn.Module):
             elif isinstance(m, torch.nn.BatchNorm1d):
                 torch.nn.init.constant_(m.weight, 1)
                 torch.nn.init.constant_(m.bias, 0)
-            elif isinstance(m, torch.nn.Linear):
+            elif isinstance(m, torch.nn.Linear) or isinstance(m, LinearStandardized):
                 torch.nn.init.normal_(m.weight, 0, 0.01)
                 torch.nn.init.constant_(m.bias, 0)
 
@@ -121,21 +121,40 @@ def build_timm_model(model_name, standardized_linear_weights=False):
     model = timm.create_model(
         model_card_name, pretrained=True
     )
-    if standardized_linear_weights:
-        if model_name in ["Timm-ConvNext", "Timm-CoAtNet", "Timm-mViT"]:
-            n_in, n_out = model.head.fc.in_features, model.head.fc.out_features
+    if model_name in ["Timm-ConvNext", "Timm-CoAtNet", "Timm-mViT"]:
+        n_in, n_out = model.head.fc.in_features, model.head.fc.out_features
+        if standardized_linear_weights:
             model.head.fc = LinearStandardized(n_in, n_out)
-        elif model_name in ["Timm-VOLO", "Timm-MLP", "Timm-DeiT", "Timm-EVA"]:
-            n_in, n_out = model.head.in_features, model.head.out_features
+        else:
+            model.head.fc = torch.nn.Linear(n_in, n_out)
+        torch.nn.init.normal_(model.head.fc.weight, 0, 0.01)
+        torch.nn.init.constant_(model.head.fc.bias, 0)
+    elif model_name in ["Timm-VOLO", "Timm-MLP", "Timm-DeiT", "Timm-EVA"]:
+        n_in, n_out = model.head.in_features, model.head.out_features
+        if standardized_linear_weights:
             model.head = LinearStandardized(n_in, n_out)
-        elif model_name in ["Timm-WideResNet", "Timm-ResNext"]:
-            n_in, n_out = model.fc.in_features, model.fc.out_features
+        else:
+            model.head = torch.nn.Linear(n_in, n_out)
+        torch.nn.init.normal_(model.head.weight, 0, 0.01)
+        torch.nn.init.constant_(model.head.bias, 0)
+    elif model_name in ["Timm-WideResNet", "Timm-ResNext"]:
+        n_in, n_out = model.fc.in_features, model.fc.out_features
+        if standardized_linear_weights:
             model.fc = LinearStandardized(n_in, n_out)
-        elif model_name in ["Timm-MobileNet", "Timm-EfficientNet"]:
-            n_in, n_out = model.classifier.in_features, model.classifier.out_features
+        else:
+            model.fc = torch.nn.Linear(n_in, n_out)
+        torch.nn.init.normal_(model.fc.weight, 0, 0.01)
+        torch.nn.init.constant_(model.fc.bias, 0)
+    elif model_name in ["Timm-MobileNet", "Timm-EfficientNet"]:
+        n_in, n_out = model.classifier.in_features, model.classifier.out_features
+        if standardized_linear_weights:
             model.classifier = LinearStandardized(n_in, n_out)
         else:
-            raise RuntimeError("Unimplemented Timm model creation.")
+            model.classifier = torch.nn.Linear(n_in, n_out)
+        torch.nn.init.normal_(model.classifier.weight, 0, 0.01)
+        torch.nn.init.constant_(model.classifier.bias, 0)
+    else:
+        raise RuntimeError("Unimplemented Timm model creation.")
     return model
 
 
