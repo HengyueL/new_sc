@@ -83,14 +83,14 @@ def get_scheduler(config, optimizer):
     else:
         raise RuntimeError("The author did not implement other scheduler yet.")
     
-    # === Add 3 warm up epochs ===
+    # === Add 5 warm up epochs ===
     warm_up_scheduler = torch.optim.lr_scheduler.LinearLR(
-        optimizer, start_factor=0.2, total_iters=3
+        optimizer, start_factor=0.1, total_iters=5
     )
     scheduler = torch.optim.lr_scheduler.SequentialLR(
         optimizer, schedulers=[warm_up_scheduler, scheduler], milestones=[3]
     )
-    msg += " with Linear Warm Ups (3 epochs)."
+    msg += " with Linear Warm Ups (5 epochs)."
     return scheduler, msg
 
 
