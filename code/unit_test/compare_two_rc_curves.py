@@ -10,11 +10,12 @@ sys.path.append(path3)
 import numpy as np
 import matplotlib.pyplot as plt
 import seaborn as sns
+import matplotlib.colors as mcolors
 sns.set()
-
+COLORS = list(mcolors.TABLEAU_COLORS)
 
 def main():
-    fig, ax = plt.subplots(nrows=1, ncols=2, figsize=(16, 8))  # ax[0] --- RC curves; ax[1] --- full coverage acc
+    fig, ax = plt.subplots(nrows=1, ncols=2, figsize=(16, 10))  # ax[0] --- RC curves; ax[1] --- full coverage acc
     rc_folder = os.path.join(
         "test-vis", "RC-Curve-Data"
     )
@@ -22,7 +23,7 @@ def main():
     acc_plot_x, acc_plot_x_names = [], []
 
     case_names = [f for f in os.listdir(rc_folder)]
-    for case in case_names:
+    for color_idx, case in enumerate(case_names):
         exp_folder = os.path.join(rc_folder, case)
         with open(os.path.join(exp_folder, "coverage.pkl"), 'rb') as fp:
             c1 = pickle.load(fp)
@@ -40,9 +41,12 @@ def main():
             else:
                 for name in acc_plot_x_names:
                     acc_values.append(acc_dict[name])
-
-        ax[0].plot(c1, r1, label=case, lw=2)
-        ax[1].scatter(acc_plot_x, acc_values, label=case, lw=4, alpha=0.8)
+        if "margin" in case.lower():
+            ls, marker = "dashed", None
+        else:
+            ls, marker = "solid", None
+        ax[0].plot(c1, r1, label=case, lw=2, marker=marker, ls=ls, alpha=0.7, color=COLORS[color_idx])
+        ax[1].scatter(acc_plot_x, acc_values, label=case, lw=4, alpha=0.8, color=COLORS[color_idx])
 
     ax[0].set_xlabel("coverage")
     ax[0].set_ylabel("SC risk")
@@ -56,7 +60,7 @@ def main():
     # Set ticks labels for x-axis
     ax[1].set_xticklabels(acc_plot_x_names, rotation='vertical')
     plt.show()
-
+    plt.close(fig)
 
 if __name__ == "__main__":
     main()
