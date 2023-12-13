@@ -377,10 +377,15 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument(
         "--model_name", dest="model_name", type=str,
-        default="CIFAR-STD-2",
+        default="CIFAR-Margin-1",
         help="Model name to test."
     )
     args = parser.parse_args()
-    main(args)
+
+    root_dir = "SC-raw-data"
+    model_names = [f for f in os.listdir(root_dir)]
+    for model_name in model_names:
+        args.model_name = model_name
+        main(args)
 
     print("Completed.")
