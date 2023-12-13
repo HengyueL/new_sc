@@ -15,8 +15,9 @@ def get_loss(loss_config):
         rescale_logits = loss_config["rescale_logits"]
         power = loss_config["power"]
         reduction = loss_config["reduction"]
+        margin=loss_config["margin"]
         loss_func = MarginLoss(
-            reduction=reduction, margin=1, p=power, rescale_logits=rescale_logits
+            reduction=reduction, margin=margin, p=power, rescale_logits=rescale_logits
         )
         if rescale_logits:
             msg += "TRUE"
