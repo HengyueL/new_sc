@@ -55,6 +55,7 @@ def main():
 
     ax[1].set_title("Full coverage acc. (Old Robustness Vis.)")
     ax[1].legend()
+    ax[1].set_ylabel("Prediction accuracy")
     # Set number of ticks for x-axis
     ax[1].set_xticks(acc_plot_x)
     # Set ticks labels for x-axis
