@@ -21,7 +21,7 @@ class MarginLoss(nn.Module):
     def forward(self, logits, labels):
         
         if self.rescale_logits:
-            logits_min, logits_max = torch.amin(logits), torch.amax(logits)
+            logits_min, logits_max = torch.amin(logits).clone().detach(), torch.amax(logits).clone().detach()
             logits = (logits - logits_min) / (logits_max - logits_min)
 
         correct_logits = torch.gather(logits, 1, labels.view(-1, 1)) # [n, 1]  --- x[y]
