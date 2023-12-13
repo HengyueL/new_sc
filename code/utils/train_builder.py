@@ -2,6 +2,7 @@ import torch
 import os
 import timm
 from utils.models import ResNet34Customized, ResNet50Customized, TIMM_MODEL_CARDS, build_timm_model
+from utils.loss import MarginLoss
 
 
 def get_loss(loss_config):
@@ -9,6 +10,10 @@ def get_loss(loss_config):
     if loss_config["name"] == "CE":
         msg += "[CE]"
         loss_func = torch.nn.CrossEntropyLoss(reduction=loss_config["reduction"])
+    elif loss_config["name"] == "Margin":
+        msg += "[Margin] Loss"
+        rescale_logits = loss_config["rescale_logits"]
+        loss_func = MarginLoss(rescale_logits=rescale_logits)
     else:
         raise RuntimeError("Unimplemented loss type.")
     return loss_func, msg

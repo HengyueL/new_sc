@@ -26,13 +26,6 @@ def main(cfg):
             # set the wandb project where this run will be logged
             project=wandb_config["project"],
             name=cfg["log_folder"]["save_root"]
-            # track hyperparameters and run metadata
-            # config={
-            #     "learning_rate": 0.02,
-            #     "architecture": "CNN",
-            #     "dataset": "CIFAR-100",
-            #     "epochs": 10,
-            # }
         )
 
     # === Create Experiment Save Root Dir ===
