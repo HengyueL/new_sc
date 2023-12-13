@@ -13,7 +13,11 @@ def get_loss(loss_config):
     elif loss_config["name"] == "Margin":
         msg += "[Margin] Loss"
         rescale_logits = loss_config["rescale_logits"]
-        loss_func = MarginLoss(rescale_logits=rescale_logits)
+        power = loss_config["power"]
+        reduction = loss_config["reduction"]
+        loss_func = MarginLoss(
+            reduction=reduction, margin=1, p=power, rescale_logits=rescale_logits
+        )
     else:
         raise RuntimeError("Unimplemented loss type.")
     return loss_func, msg
