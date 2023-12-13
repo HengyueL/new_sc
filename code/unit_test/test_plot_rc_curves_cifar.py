@@ -282,11 +282,15 @@ def main(args):
     model_name = args.model_name
     read_data_root = get_read_data_dir(model_name)
     save_rc_root, save_conf_root, save_rc_data_root = create_save_data_dir(model_name)
-    
+
+
+    case_acc_dict = {}
     # === Get In-D ===
     in_data_root = os.path.join(read_data_root, "CIFAR", "cifar10")
     in_logits, in_labels, last_layer_weights, last_layer_bias = read_data(in_data_root, True)
     print("Check In-D shapes: ", in_logits.shape, in_labels.shape)
+    acc = np.mean(np.argmax(in_logits, axis=1) == in_labels) * 100
+    case_acc_dict["clean_val"] = acc
 
     # Get Cov-shift Data 
     in_c_logits , in_c_labels = [], []
@@ -299,8 +303,12 @@ def main(args):
             in_c_logits.append(logits)
             in_c_labels.append(labels)
 
+            acc = np.mean(np.argmax(logits, axis=1) == labels) * 100
+            case_acc_dict["%s" % corr_type] = acc
+
     in_c_logits, in_c_labels = np.concatenate(in_c_logits, axis=0), np.concatenate(in_c_labels, axis=0)
     print("Check C shapes: ", in_c_logits.shape, in_c_labels.shape)
+    print(case_acc_dict)
 
     #  Get OOD data
     in_o_logits, in_o_labels = [], []
@@ -369,6 +377,9 @@ def main(args):
         pickle.dump(coverage_dict["geo_margin"], fp)
     with open(os.path.join(save_rc_data_root, "risk.pkl"), 'wb') as fp:
         pickle.dump(residual_dict["geo_margin"], fp)
+    with open(os.path.join(save_rc_data_root, "full_cvg_acc.pkl"), 'wb') as fp:
+        pickle.dump(case_acc_dict, fp)
+
     print('RC curve data saved successfully to file')
 
 if __name__ == "__main__":
