@@ -11,13 +11,17 @@ def get_loss(loss_config):
         msg += "[CE]"
         loss_func = torch.nn.CrossEntropyLoss(reduction=loss_config["reduction"])
     elif loss_config["name"] == "Margin":
-        msg += "[Margin] Loss"
+        msg += "[Margin] Loss | Rescale Logits: "
         rescale_logits = loss_config["rescale_logits"]
         power = loss_config["power"]
         reduction = loss_config["reduction"]
         loss_func = MarginLoss(
             reduction=reduction, margin=1, p=power, rescale_logits=rescale_logits
         )
+        if rescale_logits:
+            msg += "TRUE"
+        else:
+            msg += "FALSE"
     else:
         raise RuntimeError("Unimplemented loss type.")
     return loss_func, msg
