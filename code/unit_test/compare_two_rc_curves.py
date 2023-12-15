@@ -15,7 +15,7 @@ sns.set()
 COLORS = list(mcolors.TABLEAU_COLORS)
 
 def main():
-    fig, ax = plt.subplots(nrows=1, ncols=2, figsize=(16, 10))  # ax[0] --- RC curves; ax[1] --- full coverage acc
+    fig, ax = plt.subplots(nrows=1, ncols=2, figsize=(20, 8))  # ax[0] --- RC curves; ax[1] --- full coverage acc
     rc_folder = os.path.join(
         "test-vis", "RC-Curve-Data"
     )
@@ -41,25 +41,28 @@ def main():
             else:
                 for name in acc_plot_x_names:
                     acc_values.append(acc_dict[name])
-        if "margin" in case.lower():
-            ls, marker = "dashed", None
-        else:
+        if "p2" in case.lower():
+            ls, marker = "dotted", None
+        elif "ce" in case.lower():
             ls, marker = "solid", None
-        ax[0].plot(c1, r1, label=case, lw=2, marker=marker, ls=ls, alpha=0.7, color=COLORS[color_idx])
-        ax[1].scatter(acc_plot_x, acc_values, label=case, lw=4, alpha=0.8, color=COLORS[color_idx])
+        else:
+            ls, marker = "dashed", None
+        ax[0].plot(c1[0:-1:40], r1[0:-1:40], label=case, lw=3, marker=marker, ls=ls, alpha=0.7, color=COLORS[color_idx%10])
+        ax[1].scatter(acc_plot_x, acc_values, label=case, lw=4, alpha=0.8, color=COLORS[color_idx%10])
 
     ax[0].set_xlabel("coverage")
     ax[0].set_ylabel("SC risk")
     ax[0].set_title("RC curves")
     ax[0].legend()
 
-    ax[1].set_title("Full coverage acc. (Old Robustness Vis.)")
+    ax[1].set_title("Full coverage acc. (Per Corruption Type)")
     ax[1].legend()
     ax[1].set_ylabel("Prediction accuracy")
     # Set number of ticks for x-axis
     ax[1].set_xticks(acc_plot_x)
     # Set ticks labels for x-axis
-    ax[1].set_xticklabels(acc_plot_x_names, rotation='vertical')
+    ax[1].set_xticklabels(acc_plot_x_names, rotation=45)
+    plt.tight_layout()
     plt.show()
     plt.close(fig)
 
