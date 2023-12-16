@@ -10,20 +10,21 @@ class MarginLoss(nn.Module):
             for a 1D vector x and a label class y
             loss = max(0, margin - x[y] + x[i])**p, where x[i] = max x and i != y.
     """
-    def __init__(self, reduction="mean", margin=1, p=1, rescale_logits=False):
+    def __init__(self, reduction="mean", margin=1, p=1, rescale_logits=False, temperature=1):
         super(MarginLoss, self).__init__()
         assert reduction in ["mean", "sum", "none", None], "Reduction needs to be within ['mean', 'sum', 'none', None]"
         self.reduction = reduction
         self.margin = margin
         self.p = p
         self.rescale_logits = rescale_logits
+        self.t = temperature
 
     def forward(self, logits, labels):
         
         if self.rescale_logits:
-            # logits_min, logits_max = torch.amin(logits).clone().detach(), torch.amax(logits).clone().detach()
-            # logits = (logits - logits_min) / (logits_max - logits_min)
-            raise RuntimeError("This implementation is abandoned.")
+            # === This one implements the logit normalization ===
+            logit_norms = torch.norm(logits, p=2, dim=-1, keepdim=True) + 1e-7
+            logits = torch.div(logits, logit_norms) / self.t
 
         correct_logits = torch.gather(logits, 1, labels.view(-1, 1)) # [n, 1]  --- x[y]
         max_2_logits, argmax_2_logits = torch.topk(logits, 2, dim=1)
