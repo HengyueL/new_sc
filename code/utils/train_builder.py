@@ -16,11 +16,14 @@ def get_loss(loss_config):
         power = loss_config["power"]
         reduction = loss_config["reduction"]
         margin=loss_config["margin"]
+        temperature = loss_config["temperature"]
         loss_func = MarginLoss(
-            reduction=reduction, margin=margin, p=power, rescale_logits=rescale_logits
+            reduction=reduction, margin=margin, p=power, 
+            rescale_logits=rescale_logits,
+            temperature=temperature
         )
         if rescale_logits:
-            msg += "TRUE"
+            msg += "TRUE | Temperature %.04f" % temperature
         else:
             msg += "FALSE"
     elif loss_config["name"] == "LogitNorm":
