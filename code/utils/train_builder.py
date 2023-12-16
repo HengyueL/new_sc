@@ -2,7 +2,7 @@ import torch
 import os
 import timm
 from utils.models import ResNet34Customized, ResNet50Customized, TIMM_MODEL_CARDS, build_timm_model
-from utils.loss import MarginLoss
+from utils.loss import MarginLoss, LogitNormLoss
 
 
 def get_loss(loss_config):
@@ -23,6 +23,11 @@ def get_loss(loss_config):
             msg += "TRUE"
         else:
             msg += "FALSE"
+    elif loss_config["name"] == "LogitNorm":
+        reduction = loss_config["reduction"]
+        loss_func = LogitNormLoss(
+            t=1.0, reduction=reduction
+        )
     else:
         raise RuntimeError("Unimplemented loss type.")
     return loss_func, msg
@@ -81,6 +86,14 @@ def get_scheduler(config, optimizer):
             patience=config["train"]["scheduler"]["patience"]
         )
         msg += "[ReduceLROnPlateau]"
+    elif scheduler_name == "MultiStepLR":
+        interval = n_epoch // 4
+        milestones = [interval, interval*2, interval*3]
+        scheduler = torch.optim.lr_scheduler.MultiplicativeLR(
+            optimizer,
+            lr_lambda=milestones,
+            gamma=0.1
+        )
     else:
         raise RuntimeError("The author did not implement other scheduler yet.")
     

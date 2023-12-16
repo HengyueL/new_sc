@@ -21,8 +21,9 @@ class MarginLoss(nn.Module):
     def forward(self, logits, labels):
         
         if self.rescale_logits:
-            logits_min, logits_max = torch.amin(logits).clone().detach(), torch.amax(logits).clone().detach()
-            logits = (logits - logits_min) / (logits_max - logits_min)
+            # logits_min, logits_max = torch.amin(logits).clone().detach(), torch.amax(logits).clone().detach()
+            # logits = (logits - logits_min) / (logits_max - logits_min)
+            raise RuntimeError("This implementation is abandoned.")
 
         correct_logits = torch.gather(logits, 1, labels.view(-1, 1)) # [n, 1]  --- x[y]
         max_2_logits, argmax_2_logits = torch.topk(logits, 2, dim=1)
@@ -46,6 +47,19 @@ class MarginLoss(nn.Module):
             loss = loss.sum()
 
         return loss
+
+
+class LogitNormLoss(nn.Module):
+
+    def __init__(self, t=1.0, reduction="mean"):
+        super(LogitNormLoss, self).__init__()
+        self.t = t
+        self.reduction = reduction
+
+    def forward(self, x, target):
+        norms = torch.norm(x, p=2, dim=-1, keepdim=True) + 1e-7
+        logit_norm = torch.div(x, norms) / self.t
+        return F.cross_entropy(logit_norm, target, reduction=self.reduction)
 
 
 if __name__ == "__main__":
