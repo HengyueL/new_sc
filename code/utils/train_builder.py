@@ -93,8 +93,7 @@ def get_scheduler(config, optimizer):
         )
         msg += "[ReduceLROnPlateau]"
     elif scheduler_name == "MultiStepLR":
-        interval = n_epoch // 4
-        milestones = [interval, interval*2, interval*3]
+        milestones = config["train"]["scheduler"]["milestones"]
         scheduler = torch.optim.lr_scheduler.MultiStepLR(
             optimizer,
             milestones=milestones,
