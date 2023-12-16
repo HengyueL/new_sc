@@ -56,7 +56,7 @@ def main(cfg):
 
     # === Create Scheduler, Optmizer 
     train_loss_func, msg = get_loss(loss_config=cfg["train"]["loss"])
-    val_loss_func, _ = get_loss(loss_config=cfg["val"]["loss"])
+    val_loss_func, _ = get_loss(loss_config=cfg["train"]["loss"])  # Use the same as training.
     print_and_log(msg, log_file)
     optimizer, msg = get_optimizer(optimizer_cfg=cfg["train"]["optimizer"], model=model)
     print_and_log(msg, log_file)

@@ -89,9 +89,9 @@ def get_scheduler(config, optimizer):
     elif scheduler_name == "MultiStepLR":
         interval = n_epoch // 4
         milestones = [interval, interval*2, interval*3]
-        scheduler = torch.optim.lr_scheduler.MultiplicativeLR(
+        scheduler = torch.optim.lr_scheduler.MultiStepLR(
             optimizer,
-            lr_lambda=milestones,
+            milestones=milestones,
             gamma=0.1
         )
     else:
