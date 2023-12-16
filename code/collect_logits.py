@@ -63,7 +63,7 @@ def main(args):
     training_config = load_json(args.model_config)
     model, _ = get_model(training_config)
     ckpt_dir = os.path.join(
-        training_config["ckpt_dir"], "best.pth"
+        training_config["ckpt_dir"], args.ckpt_name
     )
     model_state_dict = torch.load(ckpt_dir)["model_state_dict"]
     model.load_state_dict(model_state_dict)
@@ -174,6 +174,11 @@ if __name__ == "__main__":
     parser.add_argument(
         "--dataset_path_dict", dest="dataset_path_dict", default="config_files/dataset_path.json", type=str,
         help="A .json file that stores all the dataset paths to avoid constant coding."
+    )
+    parser.add_argument(
+        "--ckpt_name", dest="ckpt_name", type=str,
+        default="latest.pth",
+        help="The checkpoint file to load."
     )
     args = parser.parse_args()
 

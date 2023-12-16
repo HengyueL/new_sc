@@ -39,7 +39,7 @@ def get_trainsform(name, normalize=True, is_train=False):
         if name == "cifar10":
             transform.extend([
                 torchvision.transforms.RandomHorizontalFlip(),
-                torchvision.transforms.RandomCrop(32, padding=4),
+                # torchvision.transforms.RandomCrop(32, padding=4),
             ])
         elif name == "imagenet":
             transform.extend([
