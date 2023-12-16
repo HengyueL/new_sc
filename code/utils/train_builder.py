@@ -24,10 +24,13 @@ def get_loss(loss_config):
         else:
             msg += "FALSE"
     elif loss_config["name"] == "LogitNorm":
+        msg += "[LogitNorm] Loss | "
         reduction = loss_config["reduction"]
+        temperature = loss_config["temperature"]
         loss_func = LogitNormLoss(
-            t=1.0, reduction=reduction
+            t=temperature, reduction=reduction
         )
+        msg += " T = %.04f " % temperature
     else:
         raise RuntimeError("Unimplemented loss type.")
     return loss_func, msg
