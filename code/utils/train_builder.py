@@ -65,7 +65,7 @@ def get_scheduler(config, optimizer):
     scheduler_name = config["train"]["scheduler"]["name"]
 
     msg = "  Use scheduler "
-    if "Cosine" in scheduler_name:
+    if "cosine" in scheduler_name.lower():
         t_max = config["train"]["scheduler"]["cosine_t_max"]
         scheduler = torch.optim.lr_scheduler.CosineAnnealingLR(
             optimizer,

@@ -29,8 +29,9 @@ def main(cfg):
         )
 
     # === Create Experiment Save Root Dir ===
+    project_name = cfg["wandb"]["project"]
     exp_log_root = os.path.join(
-        "..", "log_folder", cfg["log_folder"]["save_root"]
+        "..", project_name, cfg["log_folder"]["save_root"]
     )
     ckpt_dir = os.path.join(exp_log_root, "checkpoints")
     makedir(exp_log_root)
