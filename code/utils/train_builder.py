@@ -62,42 +62,45 @@ def get_optimizer(optimizer_cfg, model):
 
 
 def get_scheduler(config, optimizer):
-    n_epoch = config["train"]["total_epochs"]
     scheduler_name = config["train"]["scheduler"]["name"]
 
     msg = "  Use scheduler "
     if "Cosine" in scheduler_name:
+        t_max = config["train"]["scheduler"]["cosine_t_max"]
         scheduler = torch.optim.lr_scheduler.CosineAnnealingLR(
             optimizer,
-            T_max=n_epoch
+            T_max=t_max
         )
-        msg += "[CosineAnnealing]"
-    elif scheduler_name == "Exponential":
-        scheduler = torch.optim.lr_scheduler.ExponentialLR(
-            optimizer,
-            gamma=config["train"]["scheduler"]["gamma"]
-        )
-        msg += "[Exponential]"
-    elif scheduler_name == "StepLR":
-        scheduler = torch.optim.lr_scheduler.StepLR(
-            optimizer, 
-            step_size=config["train"]["scheduler"]["step_size"], 
-            gamma=config["train"]["scheduler"]["gamma"]
-        )
-        msg += "[StepLR]"
+        msg += "[CosineAnnealing] | T_max = %d" % t_max
+    # elif scheduler_name == "Exponential":
+    #     scheduler = torch.optim.lr_scheduler.ExponentialLR(
+    #         optimizer,
+    #         gamma=config["train"]["scheduler"]["gamma"]
+    #     )
+    #     msg += "[Exponential]"
+    # elif scheduler_name == "StepLR":
+    #     scheduler = torch.optim.lr_scheduler.StepLR(
+    #         optimizer, 
+    #         step_size=config["train"]["scheduler"]["step_size"], 
+    #         gamma=config["train"]["scheduler"]["gamma"]
+    #     )
+    #     msg += "[StepLR]"
     elif scheduler_name == "ReduceLROnPlateau":
+        mode = config["train"]["scheduler"]["mode"]
+        patience = config["train"]["scheduler"]["patience"]
         scheduler =  torch.optim.lr_scheduler.ReduceLROnPlateau(
             optimizer, 
-            mode=config["train"]["scheduler"]["mode"], 
-            patience=config["train"]["scheduler"]["patience"]
+            mode=mode, 
+            patience=patience
         )
-        msg += "[ReduceLROnPlateau]"
+        msg += "[ReduceLROnPlateau] | mode %s | patience %d" % (mode, patience)
     elif scheduler_name == "MultiStepLR":
         milestones = config["train"]["scheduler"]["milestones"]
+        gamma = 0.1
         scheduler = torch.optim.lr_scheduler.MultiStepLR(
             optimizer,
             milestones=milestones,
-            gamma=0.1
+            gamma=gamma
         )
     else:
         raise RuntimeError("The author did not implement other scheduler yet.")
@@ -113,7 +116,6 @@ def get_scheduler(config, optimizer):
     return scheduler, msg
 
 
-
 def get_samples(data_config, data_from_loader, device):
     if "imagenet" in data_config["name"]:
         inputs = data_from_loader[0].to(device)
@@ -124,6 +126,7 @@ def get_samples(data_config, data_from_loader, device):
     else:
         raise RuntimeError("Unsupported Dataset")
     return inputs, labels
+
 
 def save_model_ckp(
     model, epoch, iter_num,
@@ -186,3 +189,4 @@ def get_model(cfg):
         raise RuntimeError("Unsupported models.")
     msg = "  Use Model %s " % (model.__repr__)
     return model, msg
+
