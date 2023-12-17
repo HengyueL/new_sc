@@ -66,12 +66,12 @@ def get_scheduler(config, optimizer):
 
     msg = "  Use scheduler "
     if "cosine" in scheduler_name.lower():
-        t_max = config["train"]["scheduler"]["cosine_t_max"]
-        scheduler = torch.optim.lr_scheduler.CosineAnnealingLR(
-            optimizer,
-            T_max=t_max
+        t_0 = config["train"]["scheduler"]["cosine_t_0"]
+        t_mult = config["train"]["scheduler"]["cosine_t_mult"]
+        scheduler = torch.optim.lr_scheduler.CosineAnnealingWarmRestarts(
+            optimizer, T_0=t_0, T_mult=t_mult, eta_min=0
         )
-        msg += "[CosineAnnealing] | T_max = %d" % t_max
+        msg += "[CosineAnnealing with WarmRestart] | T_0 = %d - T_mult = %d" % (t_0, t_mult)
     # elif scheduler_name == "Exponential":
     #     scheduler = torch.optim.lr_scheduler.ExponentialLR(
     #         optimizer,
