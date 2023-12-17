@@ -121,7 +121,7 @@ def main(cfg):
         optimizer_lr = get_optimizer_lr(optimizer)
         msg = "  Lr --- %.06f " % optimizer_lr
         print_and_log(msg, log_file)
-        stop_training = check_lr_criterion(optimizer_lr, target_lr)   # If lr has been too small, the final epoch to train
+        # stop_training = check_lr_criterion(optimizer_lr, target_lr)   # If lr has been too small, the final epoch to train
         
         model.train()
         for _, data in enumerate(train_loader):
