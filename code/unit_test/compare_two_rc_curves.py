@@ -41,7 +41,7 @@ def main():
             else:
                 for name in acc_plot_x_names:
                     acc_values.append(acc_dict[name])
-        if "p2" in case.lower():
+        if "marginstd" in case.lower():
             ls, marker = "dotted", None
         elif "ce" in case.lower():
             ls, marker = "solid", None
