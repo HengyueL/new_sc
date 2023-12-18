@@ -138,8 +138,8 @@ def main(cfg):
             scaler.update()
 
             rolling_train_loss_log.append(loss.item())
-            if total_iter % 50 == 0:
-                print("   Iter [%d] - Train Loss [%.08f]" % (total_iter, loss.item()))
+            if total_iter % 100 == 0:
+                print_and_log("   Iter [%d] - Train Loss [%.08f]" % (total_iter, loss.item()), log_file)
             # === print training loss per interval ===
             if total_iter % print_loss_interval == 0 and total_iter > 0:
                 avg_loss = np.mean(rolling_train_loss_log)
