@@ -224,6 +224,20 @@ def calculate_score_residual(
         CF_METHOD_STR_LIST.append(method_name)
         PLOT_SYMBOL_DICT[method_name] = [3, "p", r"$RL_{geo-M}$", "solid"]
 
+
+    normalized_logits_tensor = logits_tensor / torch.linalg.norm(logits_tensor, ord=2, dim=1, keepdim=True)
+    # raw margin (normalized logits)
+    values, indices = torch.topk(normalized_logits_tensor, 2, axis=1)
+    raw_margin_scores = (values[:, 0] - values[:, 1]).cpu().numpy()
+    raw_margin_pred = max_logit_pred
+    raw_margin_residuals = calculate_residual(raw_margin_pred, labels)
+    method_name = "raw_margin_norm"
+    scores_dict[method_name] = raw_margin_scores
+    residuals_dict[method_name] = raw_margin_residuals
+    if method_name not in CF_METHOD_STR_LIST:
+        CF_METHOD_STR_LIST.append(method_name)
+        PLOT_SYMBOL_DICT[method_name] = [2, "p", r"$RL_{norm}$", "solid"]
+
     return scores_dict, residuals_dict
 
 
@@ -364,7 +378,7 @@ def main(args):
 
     # === Plot Score Distribution ===
     method_name_list = [
-        "max_sr", "raw_margin", "geo_margin",
+        "max_sr", "raw_margin", "geo_margin", "raw_margin_norm"
     ]
     fig_name = "Clean_and_C_and_OOD.png"
     save_path = os.path.join(save_rc_root, fig_name)
@@ -374,9 +388,9 @@ def main(args):
     )
 
     with open(os.path.join(save_rc_data_root, "coverage.pkl"), 'wb') as fp:
-        pickle.dump(coverage_dict["raw_margin"], fp)
+        pickle.dump(coverage_dict["geo_margin"], fp)
     with open(os.path.join(save_rc_data_root, "risk.pkl"), 'wb') as fp:
-        pickle.dump(residual_dict["raw_margin"], fp)
+        pickle.dump(residual_dict["geo_margin"], fp)
     with open(os.path.join(save_rc_data_root, "full_cvg_acc.pkl"), 'wb') as fp:
         pickle.dump(case_acc_dict, fp)
 
