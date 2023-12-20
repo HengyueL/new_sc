@@ -1,0 +1,61 @@
+{
+    "seed": 42,
+    "continue": false,
+
+    "log_folder": {
+        "save_root": "MarginSTD-LogitNorm-StopGrad"
+    },
+
+    "wandb":{
+        "init": true,
+        "project": "ImageNet-Training"
+    },
+
+    "dataset":{
+        "name": "imagenet",
+        "dataset_path": "/scratch.global/liang656/ImageNet2012",
+        "batch_size": 1024,
+        "num_workers": 4,
+        "num_classes": 1000
+    },
+
+    "model": {
+        "name": "resnet50",
+        "standardized_fc": true
+    },
+
+    "train":{
+
+        "total_epochs": 150,
+        "print_interval": 1000,
+
+        "loss": {
+            "name": "Margin",
+            "reduction": "mean",
+            "margin": 1,
+            "power": 2,
+            "rescale_logits": true,
+            "temperature": 1
+        },
+        "optimizer": {
+            "name": "AdamW",
+            "lr": 1e-3,
+            "weight_decay": 5e-4,
+            "stop_lr": 1e-12
+        },
+
+        "scheduler": {
+            "name": "CosineAnealing",
+            "mode": null,
+            "patience": null,
+            "cosine_t_0": 25,
+            "cosine_t_mult": 2,
+            "milestones": [75, 150, 225]
+        }
+    },
+
+    "comment": {
+        "cifar": "/home/jusun/liang656/datasets/Cifar10/Clean",
+        "imagenet": "/scratch.global/liang656/ImageNet2012"
+    }
+}
