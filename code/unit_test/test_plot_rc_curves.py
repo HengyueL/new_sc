@@ -242,9 +242,9 @@ def calculate_score_residual(
 
 
 
-def get_read_data_dir(model_name):
+def get_read_data_dir(model_name, dataset_name):
     abs_root = os.path.join(
-        "SC-raw-data", "CIFAR", model_name
+        "SC-raw-data", dataset_name, model_name
     )
     return abs_root
 
@@ -277,30 +277,43 @@ def read_data(dir, load_classifier_weight=False):
 
 
 def main(args):
-    INC_CORR_TYPE_LIST = [
-        "brightness", "contrast", "defocus_blur", "elastic_transform", "fog",
-        "frost", "gaussian_blur", "gaussian_noise", "jpeg_compression", "motion_blur",
-        "pixelate", "saturate", "shot_noise", "snow", "spatter",
-        "speckle_noise", "zoom_blur"
-    ]
-    INO_LIST = [
-        "cifar100"
-    ]
-
-    # INC_CORR_TYPE_LIST = [
-    #     "gaussian_blur"
-    # ]
-    # INO_LIST = [
-    #     "cifar100"
-    # ]
+    if args.dataset_name == "CIFAR":
+        INC_CORR_TYPE_LIST = [
+            "brightness", "contrast", "defocus_blur", "elastic_transform", "fog",
+            "frost", "gaussian_blur", "gaussian_noise", "jpeg_compression", "motion_blur",
+            "pixelate", "saturate", "shot_noise", "snow", "spatter",
+            "speckle_noise", "zoom_blur"
+        ]
+        INO_LIST = [
+            "cifar100"
+        ]
+    elif args.dataset_name == "ImageNet":
+        INC_CORR_TYPE_LIST = [
+            "brightness", "contrast", "defocus_blur", "elastic_transform", "fog",
+            "frost", "gaussian_blur", "gaussian_noise", "jpeg_compression", "motion_blur",
+            "pixelate", "saturate", "shot_noise", "snow", "spatter",
+            "speckle_noise", "zoom_blur"
+        ]
+        INO_LIST = [
+            "openimage-o"
+        ]
+    else:
+        raise RuntimeError("Chech what experiment you want to do.")
     model_name = args.model_name
-    read_data_root = get_read_data_dir(model_name)
+    read_data_root = get_read_data_dir(model_name, args.dataset_name)
     save_rc_root, save_conf_root, save_rc_data_root = create_save_data_dir(model_name)
-
 
     case_acc_dict = {}
     # === Get In-D ===
-    in_data_root = os.path.join(read_data_root, "cifar10")
+    if args.dataset_name == "CIFAR":
+        in_d_data_str = "cifar10"
+        in_c_data_str = "cifar10-c"
+    elif args.dataset_name == "ImageNet":
+        in_d_data_str = "imagenet"
+        in_c_data_str = "imagenet-c"
+    else:
+        raise RuntimeError("Chech what experiment you want to do.")
+    in_data_root = os.path.join(read_data_root, in_d_data_str)
     in_logits, in_labels, last_layer_weights, last_layer_bias = read_data(in_data_root, True)
     print("Check In-D shapes: ", in_logits.shape, in_labels.shape)
     acc = np.mean(np.argmax(in_logits, axis=1) == in_labels) * 100
@@ -310,8 +323,8 @@ def main(args):
     in_c_logits , in_c_labels = [], []
     for corr_type in INC_CORR_TYPE_LIST:
         for corr_level in [3]:
-            print("Read CIFAR10-C %s-%d data." % (corr_type, corr_level))
-            in_c_path_str = "cifar10-c_%s_%d" % (corr_type, corr_level)
+            print("Read %s %s-%d data." % (in_c_data_str, corr_type, corr_level))
+            in_c_path_str = "%s_%s_%d" % (in_c_data_str, corr_type, corr_level)
             in_c_data_root = os.path.join(read_data_root, in_c_path_str)
             logits, labels, _, _ = read_data(in_c_data_root)
             in_c_logits.append(logits)
@@ -401,13 +414,16 @@ if __name__ == "__main__":
     print("This script compares the SC performance of geo/conf margins on 1) normally trained and 2) std-fc networks")
     parser = argparse.ArgumentParser()
     parser.add_argument(
-        "--model_name", dest="model_name", type=str,
-        default="CIFAR-Margin-1",
-        help="Model name to test."
+        "--root_dir", dest="root_dir", type=str,
+        default="SC-raw-data",
+        help="Root dir to retrieve SC logits data."
+    )
+    parser.add_argument(
+        "--dataset_name", dest="dataset_name",
+        default="CIFAR", type=str,
     )
     args = parser.parse_args()
-
-    root_dir = "SC-raw-data\\CIFAR"
+    root_dir = os.path.join(args.root_dir, args.dataset_name)
     model_names = [f for f in os.listdir(root_dir)]
     for model_name in model_names:
         args.model_name = model_name
