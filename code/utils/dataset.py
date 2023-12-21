@@ -28,11 +28,17 @@ def get_trainsform(name, normalize=True, is_train=False):
     transform = []
 
     # size transform specific for dataset
-    if "imagenet" in name:
+    if "imagenet" in name.lower():
         transform.extend([
-            torchvision.transforms.Resize(256),
+            torchvision.transforms.Resize(256, antialias=True),
             torchvision.transforms.CenterCrop(224),
         ])
+    elif "openimage" in name.lower():
+        transform.extend([
+            torchvision.transforms.Resize(256, antialias=True), 
+            torchvision.transforms.CenterCrop(224),
+        ])
+
 
     # augmentations specific for training
     if is_train:
