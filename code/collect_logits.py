@@ -177,7 +177,7 @@ if __name__ == "__main__":
     )
     parser.add_argument(
         "--ckpt_name", dest="ckpt_name", type=str,
-        default="latest.pth",
+        default="best.pth",
         help="The checkpoint file to load."
     )
     args = parser.parse_args()
