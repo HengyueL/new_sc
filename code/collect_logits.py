@@ -83,14 +83,14 @@ def main(args):
         save_data_root = os.path.join("..", "SC-raw-data", "CIFAR", model_id_str, name_str)
     elif dataset_str in ["cifar10", "cifar100", "imagenet", "imagenet-o, openimage-o"]:
         if "cifar" in dataset_str:
-            save_data_root = os.path.join("..", "SC-raw-data%", "CIFAR", model_id_str, dataset_str)
+            save_data_root = os.path.join("..", "SC-raw-data", "CIFAR", model_id_str, dataset_str)
         else:
             save_data_root = os.path.join("..", "SC-raw-data", "ImageNet", model_id_str, dataset_str)
     elif dataset_str == "imagenet-c":
         corr_str = args.corr_type
         level_str = "%d" % args.corr_level
         name_str = "%s_%s_%s" % (dataset_str, corr_str, level_str) 
-        save_data_root = os.path.join("..", "cifar100", "ImageNet", model_id_str,  name_str)
+        save_data_root = os.path.join("..", "SC-raw-data", "ImageNet", model_id_str,  name_str)
     else:
         raise RuntimeError("UNsupported Dataset.")
     os.makedirs(save_data_root, exist_ok=True)
@@ -194,8 +194,6 @@ if __name__ == "__main__":
                     args.corr_level = corr_level
                     main(args)
         args.dataset = "imagenet"
-        main(args)
-        args.dataset = "imagenet-o"
         main(args)
         args.dataset = "openimage-o"
         main(args)

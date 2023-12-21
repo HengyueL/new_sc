@@ -197,12 +197,12 @@ def get_loader_imagenet_val(
 def get_loader_imagenet_c(
     data_path, corr_type, corr_level, batch_size=512
 ):
-    data_path = os.path.join(
+    data_path_c = os.path.join(
         data_path, corr_type, str(corr_level)
     )
     val_transform = get_trainsform(name="imagenet-c", is_train=False)
     dataset_val = ImageNet(
-        data_path, split="val", transform=val_transform
+        data_path_c, split="val", transform=val_transform
     )
     val_loader = DataLoader(
         dataset=dataset_val, batch_size=batch_size, shuffle=False
