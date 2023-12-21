@@ -1,12 +1,15 @@
+
 import pickle
-import os
-import sys
+import argparse
+import sys, os
 dir_path = os.path.abspath(".")
 sys.path.append(dir_path)
 path2 = os.path.join(dir_path, "..")
 sys.path.append(path2)
 path3 = os.path.join(dir_path, "code")
 sys.path.append(path3)
+
+from utils.general import clear_terminal_output
 import numpy as np
 import matplotlib.pyplot as plt
 import seaborn as sns
@@ -14,10 +17,10 @@ import matplotlib.colors as mcolors
 sns.set()
 COLORS = list(mcolors.TABLEAU_COLORS)
 
-def main():
+def main(args):
     fig, ax = plt.subplots(nrows=1, ncols=2, figsize=(20, 8))  # ax[0] --- RC curves; ax[1] --- full coverage acc
     rc_folder = os.path.join(
-        "test-vis", "RC-Curve-Data"
+        args.root_dir, "RC-Curve-Data"
     )
 
     acc_plot_x, acc_plot_x_names = [], []
@@ -67,5 +70,13 @@ def main():
     plt.close(fig)
 
 if __name__ == "__main__":
-    main()
+    clear_terminal_output()
+    print("Plot the RC Curve & Clean | Robust acc. comparison.")
+    parser = argparse.ArgumentParser()
+    parser.add_argument(
+        "--root_dir", dest="root_dir",
+        default="test-vis-CIFAR", type=str,
+    )
+    args = parser.parse_args()
+    main(args)
     print("Completed")

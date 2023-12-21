@@ -249,10 +249,10 @@ def get_read_data_dir(model_name, dataset_name):
     return abs_root
 
 
-def create_save_data_dir(model_name):
-    save_rc_curve_dir = os.path.join("test-vis", "RC-Curves", model_name)
+def create_save_data_dir(model_name, dataset_name):
+    save_rc_curve_dir = os.path.join("test-vis-%s" % dataset_name, "RC-Curves", model_name)
     save_confidence_root_dir = os.path.join(save_rc_curve_dir, "Conf-Histograms")
-    save_rc_data_dir = os.path.join("test-vis", "RC-Curve-Data", model_name)
+    save_rc_data_dir = os.path.join("test-vis-%s" % dataset_name, "RC-Curve-Data", model_name)
     os.makedirs(save_rc_curve_dir, exist_ok=True)
     os.makedirs(save_confidence_root_dir, exist_ok=True)
     os.makedirs(save_rc_data_dir, exist_ok=True)
@@ -301,7 +301,7 @@ def main(args):
         raise RuntimeError("Chech what experiment you want to do.")
     model_name = args.model_name
     read_data_root = get_read_data_dir(model_name, args.dataset_name)
-    save_rc_root, save_conf_root, save_rc_data_root = create_save_data_dir(model_name)
+    save_rc_root, save_conf_root, save_rc_data_root = create_save_data_dir(model_name, args.dataset_name)
 
     case_acc_dict = {}
     # === Get In-D ===
