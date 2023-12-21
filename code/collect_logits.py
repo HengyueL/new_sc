@@ -1,7 +1,7 @@
 import argparse, os
 import torch
 import numpy as np
-from utils.train_builder import get_model
+from utils.train_builder import get_model, ResNet34Customized, ResNet50Customized
 from utils.general import load_json
 from utils.dataset import get_loader_imagenet_val, get_loader_imagenet_c, get_loader_openimage_o,\
     get_loader_imagenet_o, get_loader_cifar10_val, get_loader_cifar10_c, get_loader_cifar100_val
@@ -81,7 +81,7 @@ def main(args):
         level_str = "%d" % args.corr_level
         name_str = "%s_%s_%s" % (dataset_str, corr_str, level_str) 
         save_data_root = os.path.join("..", "SC-raw-data", "CIFAR", model_id_str, name_str)
-    elif dataset_str in ["cifar10", "cifar100", "imagenet", "imagenet-o, openimage-o"]:
+    elif dataset_str in ["cifar10", "cifar100", "imagenet", "imagenet-o", "openimage-o"]:
         if "cifar" in dataset_str:
             save_data_root = os.path.join("..", "SC-raw-data", "CIFAR", model_id_str, dataset_str)
         else:
@@ -135,7 +135,10 @@ def main(args):
             save_data_root, "last_layer_bias.npy"
         )
 
-        last_layer = model.classifier[-1]
+        if isinstance(model, ResNet34Customized):
+            last_layer = model.classifier[-1]
+        elif isinstance(model, ResNet50Customized):
+            last_layer = model.features.fc
         weights = last_layer.weight.data.clone().cpu().numpy()
         bias = last_layer.bias.data.clone().cpu().numpy()
 
