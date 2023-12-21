@@ -244,7 +244,7 @@ def calculate_score_residual(
 
 def get_read_data_dir(model_name):
     abs_root = os.path.join(
-        "SC-raw-data", model_name
+        "SC-raw-data", "CIFAR", model_name
     )
     return abs_root
 
@@ -300,7 +300,7 @@ def main(args):
 
     case_acc_dict = {}
     # === Get In-D ===
-    in_data_root = os.path.join(read_data_root, "CIFAR", "cifar10")
+    in_data_root = os.path.join(read_data_root, "cifar10")
     in_logits, in_labels, last_layer_weights, last_layer_bias = read_data(in_data_root, True)
     print("Check In-D shapes: ", in_logits.shape, in_labels.shape)
     acc = np.mean(np.argmax(in_logits, axis=1) == in_labels) * 100
@@ -312,7 +312,7 @@ def main(args):
         for corr_level in [3]:
             print("Read CIFAR10-C %s-%d data." % (corr_type, corr_level))
             in_c_path_str = "cifar10-c_%s_%d" % (corr_type, corr_level)
-            in_c_data_root = os.path.join(read_data_root, "CIFAR", in_c_path_str)
+            in_c_data_root = os.path.join(read_data_root, in_c_path_str)
             logits, labels, _, _ = read_data(in_c_data_root)
             in_c_logits.append(logits)
             in_c_labels.append(labels)
@@ -328,7 +328,7 @@ def main(args):
     in_o_logits, in_o_labels = [], []
     for ood_name in INO_LIST:
         print("Read %s data." % ood_name)
-        in_o_data_root = os.path.join(read_data_root, "CIFAR", ood_name)
+        in_o_data_root = os.path.join(read_data_root, ood_name)
         logits, labels, _, _ = read_data(in_o_data_root)
         in_o_logits.append(logits)
         in_o_labels.append(-10 * np.ones_like(labels))
@@ -388,9 +388,9 @@ def main(args):
     )
 
     with open(os.path.join(save_rc_data_root, "coverage.pkl"), 'wb') as fp:
-        pickle.dump(coverage_dict["geo_margin"], fp)
+        pickle.dump(coverage_dict["raw_margin"], fp)
     with open(os.path.join(save_rc_data_root, "risk.pkl"), 'wb') as fp:
-        pickle.dump(residual_dict["geo_margin"], fp)
+        pickle.dump(residual_dict["raw_margin"], fp)
     with open(os.path.join(save_rc_data_root, "full_cvg_acc.pkl"), 'wb') as fp:
         pickle.dump(case_acc_dict, fp)
 
@@ -407,7 +407,7 @@ if __name__ == "__main__":
     )
     args = parser.parse_args()
 
-    root_dir = "SC-raw-data"
+    root_dir = "SC-raw-data\\CIFAR"
     model_names = [f for f in os.listdir(root_dir)]
     for model_name in model_names:
         args.model_name = model_name
