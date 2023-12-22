@@ -318,12 +318,16 @@ def main(args):
     print("Check In-D shapes: ", in_logits.shape, in_labels.shape)
     acc = np.mean(np.argmax(in_logits, axis=1) == in_labels) * 100
     case_acc_dict["clean_val"] = acc
+    # === Check Logits scale ===
+    max_logits = np.amax(in_logits, axis=1)
+    mean_logits, std_logits = np.mean(max_logits), np.std(max_logits)
+    print("Max logit mean: %.06f | std: %.06f " % (mean_logits, std_logits))
 
     # Get Cov-shift Data 
     in_c_logits , in_c_labels = [], []
     for corr_type in INC_CORR_TYPE_LIST:
         for corr_level in [3]:
-            print("Read %s %s-%d data." % (in_c_data_str, corr_type, corr_level))
+            # print("Read %s %s-%d data." % (in_c_data_str, corr_type, corr_level))
             in_c_path_str = "%s_%s_%d" % (in_c_data_str, corr_type, corr_level)
             in_c_data_root = os.path.join(read_data_root, in_c_path_str)
             logits, labels, _, _ = read_data(in_c_data_root)
@@ -334,20 +338,20 @@ def main(args):
             case_acc_dict["%s" % corr_type] = acc
 
     in_c_logits, in_c_labels = np.concatenate(in_c_logits, axis=0), np.concatenate(in_c_labels, axis=0)
-    print("Check C shapes: ", in_c_logits.shape, in_c_labels.shape)
-    print(case_acc_dict)
+    # print("Check C shapes: ", in_c_logits.shape, in_c_labels.shape)
+    # print(case_acc_dict)
 
     #  Get OOD data
     in_o_logits, in_o_labels = [], []
     for ood_name in INO_LIST:
-        print("Read %s data." % ood_name)
+        # print("Read %s data." % ood_name)
         in_o_data_root = os.path.join(read_data_root, ood_name)
         logits, labels, _, _ = read_data(in_o_data_root)
         in_o_logits.append(logits)
         in_o_labels.append(-10 * np.ones_like(labels))
 
     in_o_logits, in_o_labels = np.concatenate(in_o_logits, axis=0), np.concatenate(in_o_labels, axis=0)
-    print("Check OOD shapes: ", in_o_logits.shape, in_o_labels.shape)
+    # print("Check OOD shapes: ", in_o_logits.shape, in_o_labels.shape)
     # === Init Dict to save RC results ===
     total_scores_dict = {}
     total_residuals_dict = {}
@@ -427,6 +431,8 @@ if __name__ == "__main__":
     model_names = [f for f in os.listdir(root_dir)]
     for model_name in model_names:
         args.model_name = model_name
+        print()
+        print("Examining : %s" % model_name)
         main(args)
 
     print("Completed.")
