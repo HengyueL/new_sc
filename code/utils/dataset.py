@@ -8,7 +8,7 @@ from torch.utils.data import Dataset
 from torchvision.datasets import ImageFolder
 import numpy as np
 from PIL import Image
-from torchvision.transforms import v2
+import torchvision.transforms as tf
 import torch
 
 
@@ -32,14 +32,13 @@ def get_trainsform(name, normalize=True, is_train=False):
     # size transform specific for dataset
     if "imagenet" in name.lower():
         transform.extend([
-            v2.ToDtype(torch.uint8, scale=True),
-            v2.Resize(256, antialias=True),
-            v2.CenterCrop(224),
+            tf.Resize(256, antialias=True),
+            tf.CenterCrop(224),
         ])
     elif "openimage" in name.lower():
         transform.extend([
-            v2.Resize(256, antialias=True), 
-            v2.CenterCrop(224),
+            tf.Resize(256, antialias=True), 
+            tf.CenterCrop(224),
         ])
 
 
@@ -47,28 +46,28 @@ def get_trainsform(name, normalize=True, is_train=False):
     if is_train:
         if name == "cifar10":
             transform.extend([
-                v2.RandomHorizontalFlip(),
+                tf.RandomHorizontalFlip(),
             ])
         elif name == "imagenet":
             transform.extend([
-                v2.RandAugment(),
-                v2.RandomHorizontalFlip(),
+                tf.RandAugment(),
+                tf.RandomHorizontalFlip(),
             ])
         else:
             raise RuntimeError("Un recognized dataset")
 
     # to tensor
-    transform.extend([v2.ToDtype(torch.float32, scale=True),])
+    transform.extend([tf.ToTensor(),])
 
     # normalize
     if normalize:
         transform.extend([
-            v2.Normalize(
+            tf.Normalize(
                 mean=DATASET_CONFIG[name].mean, 
                 std=DATASET_CONFIG[name].std
             ),
         ])
-    return v2.Compose(transform)
+    return tf.Compose(transform)
     
 
 # === Get dataset and loaders  (for training purpose with config files input) ===
