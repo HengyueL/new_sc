@@ -308,9 +308,11 @@ def main(args):
     if args.dataset_name == "CIFAR":
         in_d_data_str = "cifar10"
         in_c_data_str = "cifar10-c"
+        num_classes = 10
     elif args.dataset_name == "ImageNet":
         in_d_data_str = "imagenet"
         in_c_data_str = "imagenet-c"
+        num_classes = 1000
     else:
         raise RuntimeError("Chech what experiment you want to do.")
     in_data_root = os.path.join(read_data_root, in_d_data_str)
@@ -359,7 +361,7 @@ def main(args):
     # === Calculate Scores and Residuals for RC ===
     # in-d
     in_scores_dict, in_residuals_dict = calculate_score_residual(
-        in_logits, in_labels,  last_layer_weights, last_layer_bias,
+        in_logits, in_labels,  last_layer_weights, last_layer_bias, num_classes
     )
     dataset_name = "in-d"
     total_scores_dict[dataset_name] = {}
@@ -371,7 +373,7 @@ def main(args):
     
     # cov-shifted
     in_c_scores_dict, in_c_residuals_dict = calculate_score_residual(
-        in_c_logits, in_c_labels, last_layer_weights, last_layer_bias,
+        in_c_logits, in_c_labels, last_layer_weights, last_layer_bias, num_classes
     )
     dataset_name = "cov-shift"
     total_scores_dict[dataset_name] = {}
@@ -383,7 +385,7 @@ def main(args):
 
     # ood
     in_o_scores_dict, in_o_residuals_dict = calculate_score_residual(
-        in_o_logits, in_o_labels, last_layer_weights, last_layer_bias,
+        in_o_logits, in_o_labels, last_layer_weights, last_layer_bias, num_classes
     )
     dataset_name = "ood"
     total_scores_dict[dataset_name] = {}
