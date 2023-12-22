@@ -66,7 +66,11 @@ def main(args):
     # Set ticks labels for x-axis
     ax[1].set_xticklabels(acc_plot_x_names, rotation=45)
     plt.tight_layout()
-    plt.show()
+
+    save_fig_name = os.path.join(
+        args.root_dir, "RC-Curves", "comparision.png"
+    )
+    plt.savefig(save_fig_name)
     plt.close(fig)
 
 if __name__ == "__main__":

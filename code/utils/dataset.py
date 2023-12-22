@@ -32,7 +32,6 @@ def get_trainsform(name, normalize=True, is_train=False):
     # size transform specific for dataset
     if "imagenet" in name.lower():
         transform.extend([
-            v2.ToImage(),
             v2.ToDtype(torch.uint8, scale=True),
             v2.Resize(256, antialias=True),
             v2.CenterCrop(224),
