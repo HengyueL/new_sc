@@ -8,6 +8,8 @@ from torch.utils.data import Dataset
 from torchvision.datasets import ImageFolder
 import numpy as np
 from PIL import Image
+from torchvision.transforms import v2
+import torch
 
 
 DC = namedtuple(
@@ -30,13 +32,15 @@ def get_trainsform(name, normalize=True, is_train=False):
     # size transform specific for dataset
     if "imagenet" in name.lower():
         transform.extend([
-            torchvision.transforms.Resize(256, antialias=True),
-            torchvision.transforms.CenterCrop(224),
+            v2.ToImage(),
+            v2.ToDtype(torch.uint8, scale=True),
+            v2.Resize(256, antialias=True),
+            v2.CenterCrop(224),
         ])
     elif "openimage" in name.lower():
         transform.extend([
-            torchvision.transforms.Resize(256, antialias=True), 
-            torchvision.transforms.CenterCrop(224),
+            v2.Resize(256, antialias=True), 
+            v2.CenterCrop(224),
         ])
 
 
@@ -44,29 +48,28 @@ def get_trainsform(name, normalize=True, is_train=False):
     if is_train:
         if name == "cifar10":
             transform.extend([
-                torchvision.transforms.RandomHorizontalFlip(),
-                # torchvision.transforms.RandomCrop(32, padding=4),
+                v2.RandomHorizontalFlip(),
             ])
         elif name == "imagenet":
             transform.extend([
-                torchvision.transforms.RandAugment(),
-                torchvision.transforms.RandomHorizontalFlip(),
+                v2.RandAugment(),
+                v2.RandomHorizontalFlip(),
             ])
         else:
             raise RuntimeError("Un recognized dataset")
 
     # to tensor
-    transform.extend([torchvision.transforms.ToTensor(),])
+    transform.extend([v2.ToDtype(torch.float32, scale=True),])
 
     # normalize
     if normalize:
         transform.extend([
-            torchvision.transforms.Normalize(
+            v2.Normalize(
                 mean=DATASET_CONFIG[name].mean, 
                 std=DATASET_CONFIG[name].std
             ),
         ])
-    return torchvision.transforms.Compose(transform)
+    return v2.Compose(transform)
     
 
 # === Get dataset and loaders  (for training purpose with config files input) ===
