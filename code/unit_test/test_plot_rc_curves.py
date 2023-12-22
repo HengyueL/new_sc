@@ -280,7 +280,8 @@ def main(args):
     if args.dataset_name == "CIFAR":
         INC_CORR_TYPE_LIST = [
             "brightness", "contrast", "defocus_blur", "elastic_transform", "fog",
-            "frost", "gaussian_blur", "gaussian_noise", "jpeg_compression", "motion_blur",
+            "frost", "gaussian_blur", "gaussian_noise", "glass_blur", "impulse_noise",
+            "jpeg_compression", "motion_blur",
             "pixelate", "saturate", "shot_noise", "snow", "spatter",
             "speckle_noise", "zoom_blur"
         ]
@@ -290,7 +291,8 @@ def main(args):
     elif args.dataset_name == "ImageNet":
         INC_CORR_TYPE_LIST = [
             "brightness", "contrast", "defocus_blur", "elastic_transform", "fog",
-            "frost", "gaussian_blur", "gaussian_noise", "jpeg_compression", "motion_blur",
+            "frost", "gaussian_blur", "gaussian_noise", "glass_blur", "impulse_noise",
+            "jpeg_compression", "motion_blur",
             "pixelate", "saturate", "shot_noise", "snow", "spatter",
             "speckle_noise", "zoom_blur"
         ]
