@@ -128,7 +128,7 @@ class LinearStandardized(nn.Linear):
             new_weight = self.weight
             
         new_bias = None
-        scale = torch.linalg.norm(new_weight, dim=1, keepdim=True)
+        scale = torch.linalg.norm(new_weight, dim=1, keepdim=True) + 1e-6
         new_weight = new_weight / scale
         return F.linear(new_input, new_weight, new_bias)
     

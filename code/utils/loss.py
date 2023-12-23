@@ -69,7 +69,7 @@ class MarginLoss(nn.Module):
         
         if self.rescale_logits:
             # === This one implements the logit normalization ===
-            logit_norms = torch.norm(logits, p=2, dim=-1, keepdim=True) + 1e-7
+            logit_norms = torch.norm(logits, p=2, dim=-1, keepdim=True) + 1e-6
             logits = torch.div(logits, logit_norms) / self.t
 
         correct_logits = torch.gather(logits, 1, labels.view(-1, 1)) # [n, 1]  --- x[y]
