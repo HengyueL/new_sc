@@ -335,7 +335,7 @@ def main(args):
     # Get Cov-shift Data 
     in_c_logits , in_c_labels = [], []
     for corr_type in INC_CORR_TYPE_LIST:
-        for corr_level in [3]:
+        for corr_level in [args.corr_level]:
             # print("Read %s %s-%d data." % (in_c_data_str, corr_type, corr_level))
             in_c_path_str = "%s_%s_%d" % (in_c_data_str, corr_type, corr_level)
             in_c_data_root = os.path.join(read_data_root, in_c_path_str)
@@ -434,6 +434,10 @@ if __name__ == "__main__":
     parser.add_argument(
         "--dataset_name", dest="dataset_name",
         default="CIFAR", type=str,
+    )
+    parser.add_argument(
+        "--corr_level", dest="corr_level",
+        default=3, type=int
     )
     args = parser.parse_args()
     root_dir = os.path.join(args.root_dir, args.dataset_name)

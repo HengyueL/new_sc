@@ -211,7 +211,7 @@ if __name__ == "__main__":
             root_dir = "/home/jusun/liang656/datasets/Cifar10/CIFAR10-C"
             corr_type_list = [f.split(".npy")[0] for f in os.listdir(root_dir) if "labels" not in f]
             # corr_level_list = list(range(1, 6, 1))
-            corr_level_list = [3]
+            corr_level_list = [5]
             for corr_type in corr_type_list:
                 for corr_level in corr_level_list:
                     args.corr_type = corr_type
