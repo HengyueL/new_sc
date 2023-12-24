@@ -414,9 +414,9 @@ def main(args):
     )
 
     with open(os.path.join(save_rc_data_root, "coverage.pkl"), 'wb') as fp:
-        pickle.dump(coverage_dict["geo_margin"], fp)
+        pickle.dump(coverage_dict["raw_margin"], fp)
     with open(os.path.join(save_rc_data_root, "risk.pkl"), 'wb') as fp:
-        pickle.dump(residual_dict["geo_margin"], fp)
+        pickle.dump(residual_dict["raw_margin"], fp)
     with open(os.path.join(save_rc_data_root, "full_cvg_acc.pkl"), 'wb') as fp:
         pickle.dump(case_acc_dict, fp)
 
