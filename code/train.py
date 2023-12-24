@@ -186,8 +186,8 @@ def main(cfg):
         w_min, w_max = np.amin(weight_norm), np.amax(weight_norm)
         w_aug_min, w_aug_max = np.amin(aug_weight_norm), np.amax(aug_weight_norm)
         msg = " Check last layer weight norms: \n"
-        msg += "    Last later weights --- Min %.06f | Max %.06f  \n " % (w_min, w_max)
-        msg += "    Last later weights (incl. bias) --- Min %.06f | Max %.06f  \n " % (w_aug_min, w_aug_max)
+        msg += "    Last later weights (excl. bias) --- Min %.06f | Max %.06f  \n" % (w_min, w_max)
+        msg += "    Last later weights (incl. bias) --- Min %.06f | Max %.06f  \n" % (w_aug_min, w_aug_max)
         print_and_log(msg)
 
         validation_loss_log = []
