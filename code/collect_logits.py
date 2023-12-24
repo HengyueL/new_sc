@@ -190,7 +190,7 @@ if __name__ == "__main__":
     )
     args = parser.parse_args()
 
-    print("Experimenting: %s" % args.model_config["log_folder"]["save_root"])
+    print("Experimenting: %s" % args.model_config)
     if "imagenet" in args.dataset:
         if args.dataset == "imagenet-c":
             root_dir = "/scratch.global/liang656/ImageNet-C/"
