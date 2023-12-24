@@ -140,10 +140,16 @@ def main(args):
         last_layer = model.features.fc
     weights = last_layer.weight.data.clone().cpu().numpy()
     bias = last_layer.bias.data.clone().cpu().numpy()
-
+    
     np.save(save_weight_name, weights)
     np.save(save_bias_name, bias)
-    
+    vec_aug = np.concatenate([weights, bias[:, np.newaxis]], axis=1)
+    aug_weight_norm = np.linalg.norm(vec_aug, ord=2, axis=1)
+    w_aug_min, w_aug_max = np.amin(aug_weight_norm), np.amax(aug_weight_norm)
+    msg = " Check last layer weight norms: \n"
+    msg += "    Last later weights (incl. bias) --- Min %.06f | Max %.06f" % (w_aug_min, w_aug_max)
+    print(msg)
+
     print(
         "Final shape Check: ", 
         np.concatenate(logits_log, axis=0).shape,

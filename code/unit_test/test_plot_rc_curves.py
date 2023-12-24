@@ -327,6 +327,11 @@ def main(args):
     mean_logits, std_logits = np.mean(max_logits), np.std(max_logits)
     print("Max logit mean: %.06f | std: %.06f " % (mean_logits, std_logits))
 
+    # ==== Ignore the weight and bias data if model uses std ===
+    if "std" in args.model_name:
+        print("Model %s --- Ignore the saved fc weights and biases because of weight standardization.")
+        last_layer_weights, last_layer_bias = None, None
+
     # Get Cov-shift Data 
     in_c_logits , in_c_labels = [], []
     for corr_type in INC_CORR_TYPE_LIST:
