@@ -41,11 +41,11 @@ def get_trainsform(name, normalize=True, is_train=False):
             tf.CenterCrop(224),
         ])
 
-
     # augmentations specific for training
     if is_train:
         if name == "cifar10":
             transform.extend([
+                tf.RandAugment(),
                 tf.RandomHorizontalFlip(),
             ])
         elif name == "imagenet":
