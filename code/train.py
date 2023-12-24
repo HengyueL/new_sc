@@ -86,7 +86,11 @@ def main(cfg):
         summary = {
             "train_loss": [],
             "val_loss": [],
-            "val_acc": []
+            "val_acc": [],
+            "max_fc_weight_norm": [],
+            "min_fc_weight_norm": [],
+            "mean_max_logits": [],
+            "std_max_logits": []
         }
         best_val_acc = 0.
 
@@ -117,7 +121,7 @@ def main(cfg):
     while epoch < cfg["train"]["total_epochs"] and not stop_training:
         epoch += 1
         t_start = time.time()  # Epoch Training start time
-        msg = "===== Training epoch [%d] =====" % epoch
+        msg = "\n===== Training epoch [%d] =====" % epoch
         print_and_log(msg, log_file)
         optimizer_lr = get_optimizer_lr(optimizer)
         msg = "  Lr --- %.06f " % optimizer_lr
@@ -187,12 +191,13 @@ def main(cfg):
         w_aug_min, w_aug_max = np.amin(aug_weight_norm), np.amax(aug_weight_norm)
         msg = " Check last layer weight norms: \n"
         msg += "    Last later weights (excl. bias) --- Min %.06f | Max %.06f  \n" % (w_min, w_max)
-        msg += "    Last later weights (incl. bias) --- Min %.06f | Max %.06f  \n" % (w_aug_min, w_aug_max)
+        msg += "    Last later weights (incl. bias) --- Min %.06f | Max %.06f" % (w_aug_min, w_aug_max)
         print_and_log(msg, log_file)
 
         validation_loss_log = []
         val_correct, val_total_samples = 0., 0
         model.eval()
+        max_logit_log = []
         with torch.no_grad():
             for _, data in enumerate(val_loader):
                 inputs, labels = get_samples(cfg["dataset"], data, device)
@@ -203,6 +208,8 @@ def main(cfg):
                 pred = output.argmax(1)
                 val_correct += (pred == labels).sum().item()
                 val_total_samples += labels.shape[0]
+
+                max_logit_log.append(torch.amax(output, dim=1).cpu().numpy())
         val_acc = val_correct / (val_total_samples) * 100
         val_loss_epoch = np.mean(validation_loss_log)
         msg = "  Epoch [%d] Validation loss - [%.08f] | Validation acc - [%.04f %%]" % (
@@ -210,9 +217,19 @@ def main(cfg):
         )
         print_and_log(msg, log_file)
 
+        max_logit_log = np.concatenate(max_logit_log, axis=0)
+        mean_max_logit, std_max_logit = np.mean(max_logit_log), np.std(max_logit_log)
+        msg = " Check Max Logit Stats. (val set) \n"
+        msg += "     Max Logits ---- Mean %.06f | Std %.06f " % (mean_max_logit, std_max_logit)
+        print_and_log(msg, log_file)
+
         # === Log Training Stats ===
         summary["val_loss"].append(val_loss_epoch)
         summary["val_acc"].append(val_acc)
+        summary["max_fc_weight_norm"].append(w_aug_max)
+        summary["min_fc_weight_norm"].append(w_aug_min)
+        summary["mean_max_logits"].append(mean_max_logit)
+        summary["std_max_logits"].append(std_max_logit)
         save_dict_to_csv(summary, csv_dir)
         if wandb_config["init"]:
             wandb.log({
@@ -220,6 +237,9 @@ def main(cfg):
                 "val_loss": val_loss_epoch,
                 "val_acc": val_acc,
                 "lr": optimizer_lr,
+                "max_fc_weight_norm": w_aug_max,
+                "min_fc_weight_norm": w_aug_min,
+                "mean_max_logit": mean_max_logit,
             })
         if val_acc > best_val_acc:
             best_val_acc = val_acc
