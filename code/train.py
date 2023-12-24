@@ -11,6 +11,7 @@ from utils.general import load_json, set_random_seeds, makedir, create_log_info_
     save_dict_to_csv
 from utils.train_builder import get_loss, get_samples, save_model_ckp, get_scheduler, \
     get_optimizer, get_model
+from utils.models import ResNet34Customized, ResNet50Customized
 from utils.dataset import get_loader_train
 
 
@@ -165,6 +166,21 @@ def main(cfg):
 
         msg = "===== Validation Epoch [%d] ====" % epoch
         print_and_log(msg, log_file)
+
+        # === Check fc layer weights and bias norm ===
+        if isinstance(model, ResNet34Customized):
+            if n_gpu > 1:
+                last_layer = model.module.classifier[-1]
+            else:
+                last_layer = model.classifier[-1]
+        elif isinstance(model, ResNet50Customized):
+            if n_gpu > 1:
+                last_layer = model.module.features.fc
+            else:
+                last_layer = model.features.fc
+        weights = last_layer.weight.data.clone().cpu().numpy()
+        bias = last_layer.bias.data.clone().cpu().numpy()
+
         validation_loss_log = []
         val_correct, val_total_samples = 0., 0
         model.eval()

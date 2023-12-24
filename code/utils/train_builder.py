@@ -96,7 +96,7 @@ def get_scheduler(config, optimizer):
         msg += "[ReduceLROnPlateau] | mode %s | patience %d" % (mode, patience)
     elif scheduler_name == "MultiStepLR":
         milestones = config["train"]["scheduler"]["milestones"]
-        gamma = 0.1
+        gamma = config["train"]["scheduler"]["gamma"]
         scheduler = torch.optim.lr_scheduler.MultiStepLR(
             optimizer,
             milestones=milestones,
@@ -107,7 +107,7 @@ def get_scheduler(config, optimizer):
     
     # === Add 5 warm up epochs ===
     warm_up_scheduler = torch.optim.lr_scheduler.LinearLR(
-        optimizer, start_factor=0.1, total_iters=5
+        optimizer, start_factor=0.01, total_iters=3
     )
     scheduler = torch.optim.lr_scheduler.SequentialLR(
         optimizer, schedulers=[warm_up_scheduler, scheduler], milestones=[3]
