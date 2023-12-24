@@ -188,7 +188,7 @@ def main(cfg):
         msg = " Check last layer weight norms: \n"
         msg += "    Last later weights (excl. bias) --- Min %.06f | Max %.06f  \n" % (w_min, w_max)
         msg += "    Last later weights (incl. bias) --- Min %.06f | Max %.06f  \n" % (w_aug_min, w_aug_max)
-        print_and_log(msg)
+        print_and_log(msg, log_file)
 
         validation_loss_log = []
         val_correct, val_total_samples = 0., 0
