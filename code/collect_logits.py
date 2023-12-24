@@ -127,23 +127,22 @@ def main(args):
 
     print("Save final classifier (fc) weight and bias if not use standardized fc layer.")
     # ====
-    if not use_std_fc_weights:
-        save_weight_name = os.path.join(
-            save_data_root, "last_layer_weights.npy"
-        )
-        save_bias_name = os.path.join(
-            save_data_root, "last_layer_bias.npy"
-        )
+    save_weight_name = os.path.join(
+        save_data_root, "last_layer_weights.npy"
+    )
+    save_bias_name = os.path.join(
+        save_data_root, "last_layer_bias.npy"
+    )
 
-        if isinstance(model, ResNet34Customized):
-            last_layer = model.classifier[-1]
-        elif isinstance(model, ResNet50Customized):
-            last_layer = model.features.fc
-        weights = last_layer.weight.data.clone().cpu().numpy()
-        bias = last_layer.bias.data.clone().cpu().numpy()
+    if isinstance(model, ResNet34Customized):
+        last_layer = model.classifier[-1]
+    elif isinstance(model, ResNet50Customized):
+        last_layer = model.features.fc
+    weights = last_layer.weight.data.clone().cpu().numpy()
+    bias = last_layer.bias.data.clone().cpu().numpy()
 
-        np.save(save_weight_name, weights)
-        np.save(save_bias_name, bias)
+    np.save(save_weight_name, weights)
+    np.save(save_bias_name, bias)
     
     print(
         "Final shape Check: ", 
