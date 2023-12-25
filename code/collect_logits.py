@@ -61,18 +61,25 @@ def main(args):
     
     # === Generate Model config (in the training format so that we can reuse the function wrapper)
     training_config = load_json(args.model_config)
+    if args.use_pretrained_dino:
+        print("Use pretrained dino if the model is dino")
+        training_config["model"]["pretrained_dino"] = True
+
     model, _ = get_model(training_config)
-    ckpt_dir = os.path.join(
-        training_config["ckpt_dir"], args.ckpt_name
-    )
-    model_state_dict = torch.load(ckpt_dir)["model_state_dict"]
-    model.load_state_dict(model_state_dict)
-    model = model.to(device)
-    model.eval()
-    print("Pretrained Model Loaded")
+
+    if ("dino" in training_config["model"]["name"]) and args.use_pretrained_dino:
+        print("No weights loaded. Use the official dino-v2 weights.")
+    else:
+        ckpt_dir = os.path.join(
+            training_config["ckpt_dir"], args.ckpt_name
+        )
+        model_state_dict = torch.load(ckpt_dir)["model_state_dict"]
+        model.load_state_dict(model_state_dict)
+        model = model.to(device)
+        model.eval()
+        print("Model State Dict Loaded from disk.")
 
     model_id_str = training_config["log_folder"]["save_root"]
-    use_std_fc_weights = training_config["model"]["standardized_fc"]
     
     # === Create Standardized save dir ===
     dataset_str = args.dataset
@@ -138,6 +145,8 @@ def main(args):
         last_layer = model.classifier[-1]
     elif isinstance(model, ResNet50Customized):
         last_layer = model.features.fc
+    elif "dino" in training_config["model"]["name"]:
+        last_layer = model.linear_head
     weights = last_layer.weight.data.clone().cpu().numpy()
     bias = last_layer.bias.data.clone().cpu().numpy()
     
@@ -187,6 +196,11 @@ if __name__ == "__main__":
         "--ckpt_name", dest="ckpt_name", type=str,
         default="best.pth",
         help="The checkpoint file to load."
+    )
+    parser.add_argument(
+        "--use_pretrained_dino", dest="use_pretrained_dino", type=int,
+        default=0,
+        help="Whether use pretrained dino fc weights."
     )
     args = parser.parse_args()
 

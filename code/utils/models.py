@@ -157,6 +157,19 @@ def build_timm_model(model_name, standardized_linear_weights=False):
     return model
 
 
+def build_dino_model(standardized_linear_weights=False, use_pretrained=False):
+    model = torch.hub.load('facebookresearch/dinov2', 'dinov2_vits14_reg_lc')
+    if not use_pretrained:
+        fc = model.linear_head
+        in_f, out_f = fc.in_features, fc.out_features
+        if standardized_linear_weights:
+            model.linear_head = LinearStandardized(in_f, out_f)
+        else:
+            model.linear_head = torch.nn.Linear(in_f, out_f)
+        torch.nn.init.normal_(model.linear_head.weight)
+        torch.nn.init.constant_(model.linear_head, 0)
+    return model
+
 if __name__ == "__main__":
     # test_model = ResNet50Customized(num_classes=1000, dim_features=1024, standardized_linear_weights=False)
     # test_input = torch.randn([1,3,224,224])

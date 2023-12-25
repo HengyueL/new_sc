@@ -1,7 +1,7 @@
 import torch
 import os
 import timm
-from utils.models import ResNet34Customized, ResNet50Customized, TIMM_MODEL_CARDS, build_timm_model
+from utils.models import ResNet34Customized, ResNet50Customized, TIMM_MODEL_CARDS, build_timm_model, build_dino_model
 from utils.loss import MarginLoss, LogitNormLoss
 
 
@@ -183,6 +183,9 @@ def get_model(cfg):
             )
         elif model_name in TIMM_MODEL_CARDS.keys():  #  Timm Pretrained model finetuning
             model = build_timm_model(model_name, standardized_linear_weights=standardized_fc)
+        elif "dino" in model_name.lower():
+            use_pretrained = cfg["model"]["pretrained_dino"]
+            model = build_dino_model(standardized_linear_weights=standardized_fc, use_pretrained=use_pretrained)
         else:
             raise RuntimeError("ImageNet Models unimplemented.")
     else:
