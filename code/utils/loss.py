@@ -59,6 +59,7 @@ class MarginLoss(nn.Module):
     def __init__(self, reduction="mean", margin=1, p=1, rescale_logits=False, temperature=1):
         super(MarginLoss, self).__init__()
         assert reduction in ["mean", "sum", "none", None], "Reduction needs to be within ['mean', 'sum', 'none', None]"
+        assert p in [1, 2], "Only support p = [1, 2]"
         self.reduction = reduction
         self.margin = margin
         self.p = p
@@ -84,8 +85,8 @@ class MarginLoss(nn.Module):
         loss = torch.clamp(self.margin - correct_logits + max_incorrect_logits.detach(), min=0)
 
         # If use power values
-        if self.p != 1:
-            loss = loss ** self.p
+        if self.p == 2:
+            loss = loss * loss
 
         # If valid reduction 
         if self.reduction == "mean":

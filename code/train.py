@@ -6,6 +6,7 @@ import pandas as pd
 import wandb
 import torch
 import numpy as np
+import math
 from utils.general import load_json, set_random_seeds, makedir, create_log_info_file,\
     save_exp_info, set_cuda_device, print_and_log, get_optimizer_lr, check_lr_criterion, \
     save_dict_to_csv
@@ -101,7 +102,9 @@ def main(cfg):
 
     if n_gpu > 1:  # Data Parallel if use multiple GPUs
         model = torch.nn.DataParallel(model)
-    scaler = torch.cuda.amp.GradScaler() # torch.cuda.amp.grad_scaler.GradScaler()  # For mixed precision
+    
+    # === Depreciated for now, cuz I see nan loss ===
+    # scaler = torch.cuda.amp.GradScaler() # torch.cuda.amp.grad_scaler.GradScaler()  # For mixed precision
     
     optimizer_lr = get_optimizer_lr(optimizer)
     msg = "Initial Optimizer Learning Rate [%.6f]" % optimizer_lr
@@ -134,13 +137,30 @@ def main(cfg):
             inputs, labels = get_samples(cfg["dataset"], data, device)
             optimizer.zero_grad()
 
-            # Mixed precision autocast
-            with torch.autocast(device_type="cuda", dtype=torch.float16):
-                output = model(inputs)
-                loss = train_loss_func(output, labels)
-            scaler.scale(loss).backward()
-            scaler.step(optimizer)
-            scaler.update()
+            # # == Depreciated For now: Mixed precision autocast =====
+            # with torch.autocast(device_type="cuda", dtype=torch.float16):
+            #     output = model(inputs)
+            #     loss = train_loss_func(output, labels)
+            #     if torch.isnan(loss.item()):
+            #         output_norm = torch.linalg.norm(output, dim=1, ord=2, keepdim=True)
+            #         msg = "  Check output norm: \n    " + output_norm.__repr__ + " \n      | Loss: {}".format(loss.item())
+            #         print_and_log(msg, log_file)
+            #         raise RuntimeError("Find Loss isnan.")
+                
+            # scaler.scale(loss).backward()
+            # scaler.step(optimizer)
+            # scaler.update()
+            # ========================================================
+
+            output = model(inputs)
+            loss = train_loss_func(output, labels)
+            # if torch.isnan(loss.item()):
+            #     output_norm = torch.linalg.norm(output, dim=1, ord=2, keepdim=True)
+            #     msg = "  Check output norm: \n    " + output_norm.__repr__ + " \n      | Loss: {}".format(loss.item())
+            #     print_and_log(msg, log_file)
+            #     raise RuntimeError("Find Loss isnan.")
+            loss.backward()
+            optimizer.step()
 
             rolling_train_loss_log.append(loss.item())
             if total_iter % 100 == 0:
@@ -182,6 +202,13 @@ def main(cfg):
                 last_layer = model.module.features.fc
             else:
                 last_layer = model.features.fc
+        elif "dino" in cfg["model"]["name"]:
+            if n_gpu > 1:
+                last_layer = model.module.linear_head
+            else:
+                last_layer = model.linear_head
+        else:
+            raise RuntimeError("Unimplemented weight norm.")
         weights = last_layer.weight.data.clone().cpu().numpy()
         bias = last_layer.bias.data.clone().cpu().numpy()[:, np.newaxis]
         vec_aug = np.concatenate([weights, bias], axis=1)
