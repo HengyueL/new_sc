@@ -160,6 +160,7 @@ def build_timm_model(model_name, standardized_linear_weights=False):
 def build_dino_model(standardized_linear_weights=False, use_pretrained=False):
     model = torch.hub.load('facebookresearch/dinov2', 'dinov2_vits14_reg_lc')
     if not use_pretrained:
+        print("Random Init a New Dino Fc Head.")
         fc = model.linear_head
         in_f, out_f = fc.in_features, fc.out_features
         if standardized_linear_weights:

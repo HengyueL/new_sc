@@ -39,23 +39,32 @@ def get_loss(loss_config):
     return loss_func, msg
 
 
-def get_optimizer(optimizer_cfg, model):
+def get_optimizer(optimizer_cfg, model, model_name=None):
     opt_name = optimizer_cfg["name"]
-    msg = "  Use scheduler "
+    msg = ""
+
+    if "dino" in model_name:
+        msg += "  >>> Dino! Only Finetune the FC layer <<< >>> Freeze encoder weights <<< \n"
+        for param in model.backbone.parameters():
+            param.requires_grad = False
+        params = model.linear_head.parameters()
+    else:
+        params = model.parameters()
+
     if opt_name == "AdamW":
         lr = optimizer_cfg["lr"]
         weight_decay = optimizer_cfg["weight_decay"]
         optimizer = torch.optim.AdamW(
-            model.parameters(), lr=lr, weight_decay=weight_decay
+            params, lr=lr, weight_decay=weight_decay
         )
-        msg += "[AdamW]"
+        msg += "  Use scheduler: [AdamW]"
     elif opt_name == "SGD":
         lr = optimizer_cfg["lr"]
         weight_decay = optimizer_cfg["weight_decay"]
         optimizer = torch.optim.SGD(
-            model.parameters(), lr=lr, momentum=0.9, weight_decay=weight_decay
+            params, lr=lr, momentum=0.9, weight_decay=weight_decay
         )
-        msg += "[SGD]"
+        msg += "  Use scheduler: [SGD]"
     else:
         raise RuntimeError("The author did not implement other optimizers yet.")
     return optimizer, msg
