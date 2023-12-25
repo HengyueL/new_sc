@@ -23,7 +23,7 @@ import torch.nn.functional as F
         
 #         if self.rescale_logits:
 #             # === This one implements the logit normalization ===
-#             logit_norms = torch.norm(logits, p=2, dim=-1, keepdim=True) + 1e-7
+#             logit_norms = torch.norm(logits, p=2, dim=-1, keepdim=True) + 1e-6
 #             logits = torch.div(logits, logit_norms) / self.t
 
 #         correct_logits = torch.gather(logits, 1, labels.view(-1, 1)) # [n, 1]  --- x[y]
@@ -35,7 +35,7 @@ import torch.nn.functional as F
 #         labels_ne_max = top_argmax.squeeze().ne(labels).float().view(-1, 1)
 #         max_incorrect_logits = labels_eq_max * second_max + labels_ne_max * top_max # [n, 1] --  x[i]
 
-#         loss = torch.clamp(self.margin - correct_logits + max_incorrect_logits, min=0)
+#         loss = torch.clamp(self.margin - correct_logits + max_incorrect_logits.detach(), min=0)
 
 #         # If use power values
 #         if self.p != 1:

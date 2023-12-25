@@ -131,7 +131,7 @@ class LinearStandardized(nn.Linear):
         scale = torch.linalg.norm(new_weight, dim=1, keepdim=True) + 1e-6
         new_weight = new_weight / scale
         return F.linear(new_input, new_weight, new_bias)
-    
+
 
 if __name__ == "__main__":
 
