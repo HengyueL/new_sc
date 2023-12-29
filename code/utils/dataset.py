@@ -50,7 +50,7 @@ def get_trainsform(name, normalize=True, is_train=False):
             ])
         elif name == "imagenet":
             transform.extend([
-                tf.RandAugment(),
+                # tf.RandAugment(),
                 tf.RandomHorizontalFlip(),
             ])
         else:
