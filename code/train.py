@@ -237,7 +237,7 @@ def main(cfg):
                 val_total_samples += labels.shape[0]
 
                 top2_logits, _ = torch.topk(output, k=2, dim=1)
-                top2_logit_diff = top2_logits[:, 0] - top2_logits[:, 1].cpu().numpy()
+                top2_logit_diff = (top2_logits[:, 0] - top2_logits[:, 1]).cpu().numpy()
                 top2_logit_diff_log.append(top2_logit_diff)
 
         val_acc = val_correct / (val_total_samples) * 100
