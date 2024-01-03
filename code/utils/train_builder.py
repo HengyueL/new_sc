@@ -57,14 +57,14 @@ def get_optimizer(optimizer_cfg, model, model_name=None):
         optimizer = torch.optim.AdamW(
             params, lr=lr, weight_decay=weight_decay
         )
-        msg += "  Use scheduler: [AdamW]"
+        msg += "  Use optimizer: [AdamW]"
     elif opt_name == "SGD":
         lr = optimizer_cfg["lr"]
         weight_decay = optimizer_cfg["weight_decay"]
         optimizer = torch.optim.SGD(
             params, lr=lr, momentum=0.9, weight_decay=weight_decay
         )
-        msg += "  Use scheduler: [SGD]"
+        msg += "  Use optimizer: [SGD]"
     else:
         raise RuntimeError("The author did not implement other optimizers yet.")
     return optimizer, msg
