@@ -116,12 +116,12 @@ def get_scheduler(config, optimizer):
     
     # === Add 5 warm up epochs ===
     warm_up_scheduler = torch.optim.lr_scheduler.LinearLR(
-        optimizer, start_factor=0.01, total_iters=3
+        optimizer, start_factor=0.5, total_iters=1
     )
     scheduler = torch.optim.lr_scheduler.SequentialLR(
-        optimizer, schedulers=[warm_up_scheduler, scheduler], milestones=[3]
+        optimizer, schedulers=[warm_up_scheduler, scheduler], milestones=[2]
     )
-    msg += " with Linear Warm Ups (5 epochs)."
+    msg += " with Linear Warm Ups (1 epochs)."
     return scheduler, msg
 
 
