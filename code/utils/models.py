@@ -172,6 +172,7 @@ def build_dino_model(standardized_linear_weights=False, use_pretrained=False):
         torch.nn.init.constant_(model.linear_head.bias, 0.01)
     return model
 
+
 if __name__ == "__main__":
     # test_model = ResNet50Customized(num_classes=1000, dim_features=1024, standardized_linear_weights=False)
     # test_input = torch.randn([1,3,224,224])
