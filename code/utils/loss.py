@@ -13,6 +13,7 @@ import torch.nn.functional as F
 #     def __init__(self, reduction="mean", margin=1, p=1, rescale_logits=False, temperature=1):
 #         super(MarginLoss, self).__init__()
 #         assert reduction in ["mean", "sum", "none", None], "Reduction needs to be within ['mean', 'sum', 'none', None]"
+#         assert p in [1, 2], "Only support p = [1, 2]"
 #         self.reduction = reduction
 #         self.margin = margin
 #         self.p = p
@@ -38,8 +39,8 @@ import torch.nn.functional as F
 #         loss = torch.clamp(self.margin - correct_logits + max_incorrect_logits.detach(), min=0)
 
 #         # If use power values
-#         if self.p != 1:
-#             loss = loss ** self.p
+#         if self.p == 2:
+#             loss = loss * loss
 
 #         # If valid reduction 
 #         if self.reduction == "mean":
@@ -70,7 +71,7 @@ class MarginLoss(nn.Module):
         
         if self.rescale_logits:
             # === This one implements the logit normalization ===
-            logit_norms = torch.norm(logits, p=2, dim=-1, keepdim=True) + 1e-6
+            logit_norms = torch.norm(logits, p=1, dim=-1, keepdim=True) + 1e-6
             logits = torch.div(logits, logit_norms) / self.t
 
         correct_logits = torch.gather(logits, 1, labels.view(-1, 1)) # [n, 1]  --- x[y]

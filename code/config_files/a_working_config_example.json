@@ -3,37 +3,37 @@
     "continue": false,
 
     "log_folder": {
-        "save_root": "MarginSTD-LogitNorm-StopGrad"
+        "save_root": "L1-M1-P1"
     },
 
     "wandb":{
         "init": true,
-        "project": "ImageNet-Training"
+        "project": "CIFAR-TestMarginLoss"
     },
 
     "dataset":{
-        "name": "imagenet",
-        "dataset_path": "/scratch.global/liang656/ImageNet2012",
-        "batch_size": 1024,
-        "num_workers": 4,
-        "num_classes": 1000
+        "name": "cifar10",
+        "dataset_path": "C:\\Users\\Liang\\dataset\\Cifar10\\Clean",
+        "batch_size": 128,
+        "num_workers": 2,
+        "num_classes": 10
     },
 
     "model": {
-        "name": "resnet50",
-        "standardized_fc": true
+        "name": "resnet",
+        "standardized_fc": false
     },
 
     "train":{
 
-        "total_epochs": 150,
+        "total_epochs": 100,
         "print_interval": 1000,
 
         "loss": {
             "name": "Margin",
             "reduction": "mean",
             "margin": 1,
-            "power": 2,
+            "power": 1,
             "rescale_logits": true,
             "temperature": 1
         },
@@ -48,9 +48,9 @@
             "name": "CosineAnealing",
             "mode": null,
             "patience": null,
-            "cosine_t_0": 25,
+            "cosine_t_0": 15,
             "cosine_t_mult": 2,
-            "milestones": [75, 150, 225]
+            "milestones": [15, 45, 60]
         }
     },
 

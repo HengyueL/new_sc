@@ -90,8 +90,8 @@ def main(cfg):
             "val_acc": [],
             "max_fc_weight_norm": [],
             "min_fc_weight_norm": [],
-            "mean_max_logits": [],
-            "std_max_logits": []
+            "mean_top2_logit_diff": [],
+            "std_top2_logit_diff": []
         }
         best_val_acc = 0.
 
@@ -224,7 +224,7 @@ def main(cfg):
         validation_loss_log = []
         val_correct, val_total_samples = 0., 0
         model.eval()
-        max_logit_log = []
+        top2_logit_diff_log = []
         with torch.no_grad():
             for _, data in enumerate(val_loader):
                 inputs, labels = get_samples(cfg["dataset"], data, device)
@@ -236,7 +236,10 @@ def main(cfg):
                 val_correct += (pred == labels).sum().item()
                 val_total_samples += labels.shape[0]
 
-                max_logit_log.append(torch.amax(output, dim=1).cpu().numpy())
+                top2_logits, _ = torch.topk(output, k=2, dim=1)
+                top2_logit_diff = top2_logits[:, 0] - top2_logits[:, 1].cpu().numpy()
+                top2_logit_diff_log.append(top2_logit_diff)
+
         val_acc = val_correct / (val_total_samples) * 100
         val_loss_epoch = np.mean(validation_loss_log)
         msg = "  Epoch [%d] Validation loss - [%.08f] | Validation acc - [%.04f %%]" % (
@@ -244,10 +247,10 @@ def main(cfg):
         )
         print_and_log(msg, log_file)
 
-        max_logit_log = np.concatenate(max_logit_log, axis=0)
-        mean_max_logit, std_max_logit = np.mean(max_logit_log), np.std(max_logit_log)
-        msg = " Check Max Logit Stats. (val set) \n"
-        msg += "     Max Logits ---- Mean %.06f | Std %.06f " % (mean_max_logit, std_max_logit)
+        top2_logit_diff_log = np.concatenate(top2_logit_diff_log, axis=0)
+        mean_top2_logit_diff, std_top2_logit_diff = np.mean(top2_logit_diff_log), np.std(top2_logit_diff_log)
+        msg = " Check Top2 Logit Diff Stats. (val set) \n"
+        msg += "     ---- Mean %.06f | Std %.06f " % (mean_top2_logit_diff, std_top2_logit_diff)
         print_and_log(msg, log_file)
 
         # === Log Training Stats ===
@@ -255,8 +258,8 @@ def main(cfg):
         summary["val_acc"].append(val_acc)
         summary["max_fc_weight_norm"].append(w_aug_max)
         summary["min_fc_weight_norm"].append(w_aug_min)
-        summary["mean_max_logits"].append(mean_max_logit)
-        summary["std_max_logits"].append(std_max_logit)
+        summary["mean_top2_logit_diff"].append(mean_top2_logit_diff)
+        summary["std_top2_logit_diff"].append(std_top2_logit_diff)
         save_dict_to_csv(summary, csv_dir)
         if wandb_config["init"]:
             wandb.log({
@@ -266,7 +269,7 @@ def main(cfg):
                 "lr": optimizer_lr,
                 "max_fc_weight_norm": w_aug_max,
                 "min_fc_weight_norm": w_aug_min,
-                "mean_max_logit": mean_max_logit,
+                "mean_top2_logit_diff": mean_top2_logit_diff,
             })
         if val_acc > best_val_acc:
             best_val_acc = val_acc
@@ -293,7 +296,7 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument(
         "--config", dest="config", type=str,
-        default=os.path.join('config_files', 'train_normalized_cls.json'),
+        default=os.path.join('config_files', 'a_working_config_example.json'),
         help="Path to the json config file for training."
     )
     args = parser.parse_args()
