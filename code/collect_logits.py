@@ -61,21 +61,14 @@ def main(args):
     
     # === Generate Model config (in the training format so that we can reuse the function wrapper)
     training_config = load_json(args.model_config)
-    if args.use_pretrained_dino:
-        print("Use pretrained dino if the model is dino")
-        training_config["model"]["pretrained_dino"] = True
-
     model, _ = get_model(training_config)
 
-    if ("dino" in training_config["model"]["name"]) and args.use_pretrained_dino:
-        print("No weights loaded. Use the official dino-v2 weights.")
-    else:
-        ckpt_dir = os.path.join(
-            training_config["ckpt_dir"], args.ckpt_name
-        )
-        model_state_dict = torch.load(ckpt_dir)["model_state_dict"]
-        model.load_state_dict(model_state_dict)
-        print("Model State Dict Loaded from disk.")
+    ckpt_dir = os.path.join(
+        training_config["ckpt_dir"], args.ckpt_name
+    )
+    model_state_dict = torch.load(ckpt_dir)["model_state_dict"]
+    model.load_state_dict(model_state_dict)
+    print("Model State Dict Loaded from disk.")
     model = model.to(device)
     model.eval()
         
@@ -105,6 +98,7 @@ def main(args):
     # === Loop and get labels and pred_logits ===
     logits_log = []
     label_log = []
+    features_log = []
     with torch.no_grad():
         for _, (input, target) in enumerate(test_loader):
             input = input.to(device, dtype=torch.float)
@@ -118,19 +112,21 @@ def main(args):
                 labels = -100 * torch.ones_like(target).cpu().numpy()
             else:
                 labels = target.cpu().numpy()
-            # features = model.features(input).view(input.size(0), -1).cpu().numpy()
+            if "dino" in training_config["model"]["name"]:
+                features = model.backbone(input).view(input.size(0), -1).cpu().numpy()
 
             logits_log.append(logits)
             label_log.append(labels)
-            # features_log.append(features)
+            features_log.append(features)
 
     print("Outputs successfully collected. Now save data. ")
     save_logits_name = os.path.join(save_data_root, "pred_logits.npy")
     np.save(save_logits_name, np.concatenate(logits_log, axis=0))
     save_labels_name = os.path.join(save_data_root, "labels.npy")
     np.save(save_labels_name, np.concatenate(label_log, axis=0))
-    # save_features_name = os.path.join(save_data_root, "features.npy")
-    # np.save(save_features_name, np.concatenate(features_log, axis=0))
+    if len(features_log) > 0:
+        save_features_name = os.path.join(save_data_root, "features.npy")
+        np.save(save_features_name, np.concatenate(features_log, axis=0))
 
     print("Save final classifier (fc) weight and bias if not use standardized fc layer.")
     # ====
@@ -195,11 +191,6 @@ if __name__ == "__main__":
         "--ckpt_name", dest="ckpt_name", type=str,
         default="best.pth",
         help="The checkpoint file to load."
-    )
-    parser.add_argument(
-        "--use_pretrained_dino", dest="use_pretrained_dino", type=int,
-        default=0,
-        help="Whether use pretrained dino fc weights."
     )
     args = parser.parse_args()
 
