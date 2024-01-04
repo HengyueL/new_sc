@@ -71,8 +71,8 @@ class MarginLoss(nn.Module):
         
         if self.rescale_logits:
             # === This one implements the logit normalization ===
-            logit_norms = torch.norm(logits, p=1, dim=-1, keepdim=True) + 1e-6
-            logits = torch.div(logits, logit_norms) / self.t
+            batch_logit_norms = torch.amax(torch.norm(logits, p=1, dim=-1, keepdim=True) + 1e-6)
+            logits = torch.div(logits, batch_logit_norms) / self.t
 
         correct_logits = torch.gather(logits, 1, labels.view(-1, 1)) # [n, 1]  --- x[y]
         max_2_logits, argmax_2_logits = torch.topk(logits, 2, dim=1)

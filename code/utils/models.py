@@ -60,8 +60,8 @@ class ResNet34Customized(torch.nn.Module):
                 torch.nn.init.constant_(m.weight, 1)
                 torch.nn.init.constant_(m.bias, 0)
             elif isinstance(m, torch.nn.Linear) or isinstance(m, LinearStandardized):
-                torch.nn.init.normal_(m.weight, 0, 0.01)
-                torch.nn.init.constant_(m.bias, 0)
+                torch.nn.init.normal_(m.weight, 0, 0.005)
+                torch.nn.init.constant_(m.bias, 0.01)
 
 
 class ResNet50Customized(torch.nn.Module):
@@ -111,7 +111,7 @@ class ResNet50Customized(torch.nn.Module):
                 torch.nn.init.constant_(m.weight, 1)
                 torch.nn.init.constant_(m.bias, 0)
             elif isinstance(m, torch.nn.Linear) or isinstance(m, LinearStandardized):
-                torch.nn.init.normal_(m.weight, 0, 0.01)
+                torch.nn.init.normal_(m.weight, 0, 0.005)
                 torch.nn.init.constant_(m.bias, 0)
 
 
@@ -167,7 +167,7 @@ def build_dino_model(standardized_linear_weights=False, use_pretrained=False):
             model.linear_head = LinearStandardized(in_f, out_f)
         else:
             model.linear_head = torch.nn.Linear(in_f, out_f)
-        # torch.nn.init.normal_(model.linear_head.weight)
+        # torch.nn.init.normal_(model.linear_head.weight, 0, 0.01)
         torch.nn.init.constant_(model.linear_head.weight, 0.01)
         torch.nn.init.constant_(model.linear_head.bias, 0.01)
     return model

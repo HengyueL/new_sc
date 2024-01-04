@@ -3,7 +3,7 @@
     "continue": false,
 
     "log_folder": {
-        "save_root": "L1-M1-P1"
+        "save_root": "L1-M0.1-P1-BatchScale"
     },
 
     "wandb":{
@@ -15,7 +15,7 @@
         "name": "cifar10",
         "dataset_path": "C:\\Users\\Liang\\dataset\\Cifar10\\Clean",
         "batch_size": 128,
-        "num_workers": 2,
+        "num_workers": 4,
         "num_classes": 10
     },
 
@@ -26,31 +26,32 @@
 
     "train":{
 
-        "total_epochs": 100,
+        "total_epochs": 300,
         "print_interval": 1000,
 
         "loss": {
             "name": "Margin",
             "reduction": "mean",
-            "margin": 1,
+            "margin": 0.5,
             "power": 1,
             "rescale_logits": true,
             "temperature": 1
         },
         "optimizer": {
             "name": "AdamW",
-            "lr": 1e-3,
-            "weight_decay": 5e-4,
+            "lr": 1e-2,
+            "weight_decay": 1e-2,
             "stop_lr": 1e-12
         },
 
         "scheduler": {
-            "name": "CosineAnealing",
+            "name": "MultiStepLR",
             "mode": null,
             "patience": null,
             "cosine_t_0": 15,
             "cosine_t_mult": 2,
-            "milestones": [15, 45, 60]
+            "gamma": 0.2,
+            "milestones": [50, 100, 150, 200, 250]
         }
     },
 
