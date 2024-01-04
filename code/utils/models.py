@@ -167,8 +167,8 @@ def build_dino_model(standardized_linear_weights=False, use_pretrained=False):
             model.linear_head = LinearStandardized(in_f, out_f)
         else:
             model.linear_head = torch.nn.Linear(in_f, out_f)
-        # torch.nn.init.normal_(model.linear_head.weight, 0, 0.01)
-        torch.nn.init.constant_(model.linear_head.weight, 0.01)
+        torch.nn.init.normal_(model.linear_head.weight, 0, 0.01)
+        # torch.nn.init.constant_(model.linear_head.weight, 0.01)
         torch.nn.init.constant_(model.linear_head.bias, 0.01)
     return model
 
