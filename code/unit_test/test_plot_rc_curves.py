@@ -37,6 +37,17 @@ PLOT_SYMBOL_DICT = {}
 
 
 def RC_curve(residuals, confidence):
+    """
+        This function turns the model's 1) confidence prediction --- (n, ) ndarray; 2) residuals --- (n, ) ndarray
+        into coverage - risk (for RC curve plots).
+
+        residuals: array of 0's and 1's, e.g., [0, 1, 0, 1, ... ], where 0 ==> prediction correct and 1 ==> prediction wrong
+        confidence: array of the selection cofidence scores [s_1, s_2, s_3, s_4, ...]
+
+        return:
+            coverage -- (n, ), array of values from 0 to 1 for RC curve plot
+            risk -- (n, ) array of selection risk corr. to the coverage point.
+    """
 
     curve = []
     m = len(residuals)
